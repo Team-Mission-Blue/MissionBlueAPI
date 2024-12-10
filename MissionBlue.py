@@ -35,13 +35,15 @@ def create_session():
 
 
 # Figure Out
-def search_posts(query, access_token, since, until, limit=25, sort="top"):
+def search_posts(
+    query, access_token, since, until, limit=25, sort="top", cursor="", posts=[]
+):
     """
     Search for posts using the BlueSky API.
 
     :param query: The search query string.
     :param access_token: Access token for authentication.
-    :param limit: Number of posts to fetch, can change in main. [Can be no greater than 100]
+    :param limit: Number of posts to fetch, can change in main.
     :param sort: Sorting order ('latest' or 'top').
     :return: List of posts.
     """
@@ -56,17 +58,29 @@ def search_posts(query, access_token, since, until, limit=25, sort="top"):
         "since": since,
         "until": until,
         "limit": limit,
+        "cursor": cursor,
     }
+    counter = 0
+    while True:
+        counter += 1
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            # print(response)
+            response.raise_for_status()
+            posts = response.json().get("posts", []) + posts
+            data = response.json()
 
-    try:
-        response = requests.get(url, headers=headers, params=params)
-        print(response)
-        response.raise_for_status()
-        return response.json().get("posts", [])
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching posts: {e}")
-        print("Response:", response.text if "response" in locals() else "No response")
-        return []
+            next_cursor = data.get("cursor")
+            if not next_cursor:
+                return posts
+
+            params["cursor"] = next_cursor
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching posts: {e}")
+            print(
+                "Response:", response.text if "response" in locals() else "No response"
+            )
+            return []
 
 
 def extract_post_data(posts):
@@ -92,7 +106,6 @@ def extract_post_data(posts):
             # keys = post.keys()
             postId = post["uri"].split("/")[-1]
             postLink = f"https://bsky.app/profile/{author_handle}/post/{postId}"
-
 
             # Filter by date range
             # if start_date <= created_at_date <= end_date:
@@ -130,47 +143,35 @@ def save_to_csv(post_data, filename):
 
 if __name__ == "__main__":
     # Get user input for the search query and date range
-    sports_list = [
-        "Sailing",
-        "Shooting",
-        "Skateboarding",
-        "Sport Climbing",
-        "Surfing",
-        "Swimming",
-        "Table Tennis",
-        "Taekwondo",
-        "Tennis",
-        "Trampoline",
-        "Triathlon",
-        "Volleyball",
-        "Water Polo",
-        "Weightlifting",
-        "Wrestling",
-    ]
-    # sport_name = input("Enter the sport you're querying: ")
-    for sport in sports_list:
-        search_query = "Olympics 2024 " + sport
-        # print(search_query)
-        start_date = "2024-06-26T00:00:00Z"
-        end_date = "2024-09-11T23:59:59Z"
+    sport_name = input("Enter the sport you're querying: ")
+    search_query = "Olympics 2024 " + sport_name
+    print(search_query)
+    start_date = "2024-06-28T00:00:00Z"
+    end_date = "2024-09-28T23:59:59Z"
 
-        # Authenticate and create a session
-        print("Authenticating...")
-        access_token = create_session()
-        print("Authentication successful.")
+    # Authenticate and create a session
+    print("Authenticating...")
+    access_token = create_session()
+    print("Authentication successful.")
 
-        # Fetch posts
-        print("Fetching posts...")
-        raw_posts = search_posts(
-            search_query, access_token, start_date, end_date, limit=100, sort="latest"
-        )
+    # Fetch posts
+    print("Fetching posts...")
+    raw_posts = search_posts(
+        search_query,
+        access_token,
+        start_date,
+        end_date,
+        limit=100,
+        sort="latest",
+        cursor="",
+    )  # Can change limit
 
-        # Extract post data
-        print("Extracting post data...")
-        post_data = extract_post_data(raw_posts)
+    # Extract post data
+    print("Extracting post data...")
+    post_data = extract_post_data(raw_posts)
 
-        # print("Here is the data:", post_data)
+    # print("Here is the data:", post_data)
 
-        # Save posts to CSV
-        print("Saving posts to CSV...")
-        save_to_csv(post_data, f"{sport}.csv")
+    # Save posts to CSV
+    print("Saving posts to CSV...")
+    save_to_csv(post_data, f"{sport_name}.csv")
