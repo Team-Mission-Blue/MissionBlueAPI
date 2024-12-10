@@ -36,7 +36,6 @@ def create_session():
         exit(1)
 
 
-
 # Figure Out
 def search_posts(query, access_token, since, until, limit=25, sort="top"):
     """
@@ -59,7 +58,6 @@ def search_posts(query, access_token, since, until, limit=25, sort="top"):
         "since": since,
         "until": until,
         "limit": limit,
-
     }
 
     try:
@@ -126,7 +124,7 @@ def save_to_csv(post_data, filename):
     :param filename: Output CSV filename.
     """
     if post_data:
-        if (os.path.isfile(filename)):
+        if os.path.isfile(filename):
             os.remove(filename)
         df = pd.DataFrame(post_data)
         df.to_csv(filename, index=False)
@@ -138,22 +136,22 @@ def save_to_csv(post_data, filename):
 if __name__ == "__main__":
     # Get user input for the search query and date range
     sports_list = [
-    "Sailing",
-    "Shooting",
-    "Skateboarding",
-    "Sport Climbing",
-    "Surfing",
-    "Swimming",
-    "Table Tennis",
-    "Taekwondo",
-    "Tennis",
-    "Trampoline",
-    "Triathlon",
-    "Volleyball",
-    "Water Polo",
-    "Weightlifting",
-    "Wrestling"
-]
+        "Sailing",
+        "Shooting",
+        "Skateboarding",
+        "Sport Climbing",
+        "Surfing",
+        "Swimming",
+        "Table Tennis",
+        "Taekwondo",
+        "Tennis",
+        "Trampoline",
+        "Triathlon",
+        "Volleyball",
+        "Water Polo",
+        "Weightlifting",
+        "Wrestling",
+    ]
     # sport_name = input("Enter the sport you're querying: ")
     for sport in sports_list:
         search_query = "Olympics 2024 " + sport
@@ -168,7 +166,9 @@ if __name__ == "__main__":
 
         # Fetch posts
         print("Fetching posts...")
-        raw_posts = search_posts(search_query, access_token, start_date, end_date, limit=100, sort="latest")
+        raw_posts = search_posts(
+            search_query, access_token, start_date, end_date, limit=100, sort="latest"
+        )
 
         # Extract post data
         print("Extracting post data...")
