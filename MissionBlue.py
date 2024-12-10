@@ -2,8 +2,6 @@ import requests
 import pandas as pd
 from dotenv import load_dotenv
 import os
-import sys
-from datetime import datetime
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -95,9 +93,6 @@ def extract_post_data(posts):
             postId = post["uri"].split("/")[-1]
             postLink = f"https://bsky.app/profile/{author_handle}/post/{postId}"
 
-            created_at_date = datetime.fromisoformat(
-                created_at[:-1]
-            )  # Convert to datetime
 
             # Filter by date range
             # if start_date <= created_at_date <= end_date:

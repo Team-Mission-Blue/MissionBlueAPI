@@ -4,3 +4,4 @@ python-dotenv
 black
 nltk
 openpyxl
+ruff
