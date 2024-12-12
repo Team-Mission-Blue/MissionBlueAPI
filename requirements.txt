@@ -5,3 +5,5 @@ black
 nltk
 openpyxl
 ruff
+pylint
+tox
