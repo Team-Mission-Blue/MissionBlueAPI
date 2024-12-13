@@ -2,7 +2,6 @@
 This module conatins the BlueSky Web Scrapper
 """
 
-
 import os
 import sys
 from dotenv import load_dotenv
@@ -39,10 +38,13 @@ def create_session():
         print("Response:", response.text if "response" in locals() else "No response")
         sys.exit(1)
 
-# pylint: disable=R0913
+
+
 def generate_query_params(
     query: str, since: str, until: str, limit=25, sort="top", cursor=""
 ):
+    # pylint: disable=R0917
+    # pylint: disable=R0913
     """This functions
 
     Args:
