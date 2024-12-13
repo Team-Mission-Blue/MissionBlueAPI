@@ -1,8 +1,13 @@
+"""
+This module conatins the BlueSky Web Scrapper
+"""
+
+
 import os
 import sys
+from dotenv import load_dotenv
 import requests
 import pandas as pd
-from dotenv import load_dotenv
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -34,7 +39,7 @@ def create_session():
         print("Response:", response.text if "response" in locals() else "No response")
         sys.exit(1)
 
-
+# pylint: disable=R0913
 def generate_query_params(
     query: str, since: str, until: str, limit=25, sort="top", cursor=""
 ):
