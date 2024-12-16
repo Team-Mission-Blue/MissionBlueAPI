@@ -2,7 +2,7 @@ requests
 pandas
 python-dotenv
 black
-nltk
+shutil
 openpyxl
 ruff
 pylint
