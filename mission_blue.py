@@ -4,6 +4,7 @@ This module conatins the BlueSky Web Scrapper
 
 import os
 import sys
+import shutil
 from dotenv import load_dotenv
 import requests
 import pandas as pd
@@ -14,6 +15,19 @@ load_dotenv()
 # Access credentials from the environment variables
 BLUESKY_HANDLE = os.getenv("BLUESKY_HANDLE")
 BLUESKY_APP_PASSWORD = os.getenv("BLUESKY_APP_PASSWORD")
+
+DIRECTORY_NAME = "Scrapped Posts"
+
+# Generates Directory where scrapped post will reside in
+if not os.path.isdir(DIRECTORY_NAME):
+    try:
+        os.mkdir(DIRECTORY_NAME)
+        print(f"Directory '{DIRECTORY_NAME}' created successfully.")
+    except FileExistsError:
+        print(f"Directory '{DIRECTORY_NAME}' already exists.")
+    except PermissionError:
+        print(f"Permission denied: Unable to create '{DIRECTORY_NAME}'.")
+
 
 # Base URL
 BASE_URL = "https://bsky.social/xrpc"
@@ -37,7 +51,6 @@ def create_session():
         print("Error during authentication:", err)
         print("Response:", response.text if "response" in locals() else "No response")
         sys.exit(1)
-
 
 
 def generate_query_params(
@@ -123,8 +136,6 @@ def extract_post_data(posts):
             post_content = post["record"].get("text", "")  # Extract the text content
             author_handle = post["author"]["handle"]  # Extract the author's handle
             created_at = post["indexedAt"]  # Extract the indexed timestamp
-            # cid = post["cid"]
-            # keys = post.keys()
             post_id = post["uri"].split("/")[-1]
             post_link = f"https://bsky.app/profile/{author_handle}/post/{post_id}"
 
@@ -153,12 +164,19 @@ def save_to_csv(data, filename):
             os.remove(filename)
         data_frame = pd.DataFrame(data)
         data_frame.to_csv(filename, index=False)
+        shutil.move(f"{filename}", DIRECTORY_NAME)
+        print(f"Data saved to {DIRECTORY_NAME}/{filename}")
         print(f"Data saved to {filename}")
     else:
         print("No posts to save.")
 
 
 if __name__ == "__main__":
+    # Authenticate and create a session
+    print("Authenticating...")
+    access_token = create_session()
+    print("Authentication successful.")
+
     # Get user input for the search query and date range
     sport_name = input("Enter the sport you're querying: ")
     search_query = "Olympics 2024 " + sport_name
@@ -166,11 +184,6 @@ if __name__ == "__main__":
     START_DATE = "2024-06-28T00:00:00Z"
     END_DATE = "2024-09-28T23:59:59Z"
     SORT = "top"
-
-    # Authenticate and create a session
-    print("Authenticating...")
-    access_token = create_session()
-    print("Authentication successful.")
 
     query_param = generate_query_params(search_query, START_DATE, END_DATE)
 
