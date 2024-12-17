@@ -12,7 +12,7 @@ import pandas as pd
 
 
 # Load environment variables from the .env file
-def load_credentials() -> tuple[str, str] | ValueError:
+def load_credentials() -> tuple[str, str]:
     """
     Validates and returns user BlueSky credentials
 
