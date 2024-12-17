@@ -53,8 +53,27 @@ def create_session():
         sys.exit(1)
 
 
+def resolve_handle_to_did(handle: str, token: str) -> str:
+    """
+    Resolve a Bluesky handle to DID
+    """
+
+    url = f"{BASE_URL}/com.atproto.identity.resolveHandle"
+    headers = {"Authorization": f"Bearer {token}"}
+
+    try:
+        response = requests.get(url, headers=headers, params={"handle": handle}, timeout=10)
+        response.raise_for_status()
+        return response.json().get("did", handle)
+    except requests.exceptions.RequestException as err:
+        print(f"Error resolving handle: {err}")
+        return handle
+
+
 def generate_query_params(
-    query: str, since: str, until: str, limit=25, sort="top", cursor=""
+    token: str, query="", sort="", since="", until="",
+    mentions="", author="", lang="", domain="", url="",
+    tags=None, limit=25, cursor=""
 ):
     # pylint: disable=R0917
     # pylint: disable=R0913
@@ -71,13 +90,25 @@ def generate_query_params(
     Returns:
         _type_: _description_
     """
+    if mentions:
+        mentions = resolve_handle_to_did(mentions, token)
+    if author:
+        author = resolve_handle_to_did(author, token)
+
+    print(f"Generated query parameters: {locals()}")
     return {
         "q": query,
         "sort": sort,
         "since": since,
         "until": until,
+        "mentions": mentions,
+        "author": author,
+        "lang": lang,
+        "domain": domain,
+        "url": url,
+        "tag": tags,
         "limit": limit,
-        "cursor": cursor,
+        "cursor": cursor
     }
 
 
@@ -178,14 +209,16 @@ if __name__ == "__main__":
     print("Authentication successful.")
 
     # Get user input for the search query and date range
-    sport_name = input("Enter the sport you're querying: ")
-    search_query = "Olympics 2024 " + sport_name
-    print(search_query)
-    START_DATE = "2024-06-28T00:00:00Z"
-    END_DATE = "2024-09-28T23:59:59Z"
-    SORT = "top"
+    search_query = input("Enter your Query: ")
 
-    query_param = generate_query_params(search_query, START_DATE, END_DATE)
+    # Authenticate and create a session
+    print("Authenticating...")
+    access_token = create_session()
+    print("Authentication successful.")
+
+    query_param = generate_query_params(
+        token=access_token, query=search_query)
+
 
     # Fetch posts
     print("Fetching posts...")
@@ -199,4 +232,4 @@ if __name__ == "__main__":
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    save_to_csv(post_data, f"{sport_name}.csv")
+    save_to_csv(post_data, f"{search_query}.csv")
