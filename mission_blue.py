@@ -4,17 +4,36 @@ This module conatins the BlueSky Web Scrapper
 
 import os
 import sys
+import re
 import shutil
 from dotenv import load_dotenv
 import requests
 import pandas as pd
 
-# Load environment variables from the .env file
-load_dotenv()
 
-# Access credentials from the environment variables
-BLUESKY_HANDLE = os.getenv("BLUESKY_HANDLE")
-BLUESKY_APP_PASSWORD = os.getenv("BLUESKY_APP_PASSWORD")
+# Load environment variables from the .env file
+def load_credentials() -> tuple[str, str] | ValueError:
+    """
+    Validates and returns user BlueSky credentials
+
+    Returns:
+        tuple[str, str]: This ordered pair contains the Bluesky Username and Password
+    """
+    # pylint: disable=C0301
+    if load_dotenv():
+        # Access credentials from the environment variables
+        handle = os.getenv("BLUESKY_HANDLE")
+        password = os.getenv("BLUESKY_APP_PASSWORD")
+        handle_pattern = re.compile(r"^[A-Za-z0-9]+\.bsky\.social$", re.IGNORECASE)
+        assert handle != "", "BLUESKY_HANDLE can not be empty"
+        assert (
+            handle_pattern.match(handle) is True
+        ), f"BLUESKY_HANDLE is not in the correct form, got: {handle}, wanted: userhandle.bsky.social"
+        assert password != "", "BLUESKY_APP_PASSWORD can not be empty"
+        return (handle, password)
+    print(".env does not exist")
+    sys.exit(1)
+
 
 DIRECTORY_NAME = "Scrapped Posts"
 
@@ -33,14 +52,14 @@ if not os.path.isdir(DIRECTORY_NAME):
 BASE_URL = "https://bsky.social/xrpc"
 
 
-def create_session():
+def create_session(username: str, password: str):
     """
     Authenticate and create a session to get the access token.
 
     :return: Access token (accessJwt) for authentication.
     """
     url = f"{BASE_URL}/com.atproto.server.createSession"
-    payload = {"identifier": BLUESKY_HANDLE, "password": BLUESKY_APP_PASSWORD}
+    payload = {"identifier": username, "password": password}
 
     try:
         response = requests.post(url, json=payload, timeout=10)
@@ -172,9 +191,13 @@ def save_to_csv(data, filename):
 
 
 if __name__ == "__main__":
+
+    print("Loading Credentials...")
+    BLUESKY_HANDLE, BLUESKY_APP_PASSWORD = load_credentials()
+
     # Authenticate and create a session
     print("Authenticating...")
-    access_token = create_session()
+    access_token = create_session(BLUESKY_HANDLE, BLUESKY_APP_PASSWORD)
     print("Authentication successful.")
 
     # Get user input for the search query and date range
