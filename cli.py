@@ -176,7 +176,7 @@ lang_dict = {
     '--lang',
     type=str,
     required=False,
-    help=f'Filter posts by language.\n\nLanguage Options:\n\n {', '.join(list(lang_dict.keys()))}\n\n'
+    help=f"Filter posts by language.\n\nLanguage Options:\n\n {', '.join(list(lang_dict.keys()))}\n\n"
 )
 
 @click.option(
