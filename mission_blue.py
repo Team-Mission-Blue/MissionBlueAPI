@@ -4,11 +4,12 @@ This module conatins the BlueSky Web Scrapper
 
 import os
 import sys
-import re
+#import re  || Commented out temporarily as we will be using this later
 import shutil
 from dotenv import load_dotenv
 import requests
 import pandas as pd
+from alive_progress import alive_bar
 
 
 # Load environment variables from the .env file
@@ -88,7 +89,7 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
 def generate_query_params(
     token: str, query="", sort="", since="", until="",
     mentions="", author="", lang="", domain="", url="",
-    tags=None, limit=25, cursor=""
+    tags=None, limit=25, cursor="", posts_limit=None
 ):
     # pylint: disable=R0917
     # pylint: disable=R0913
@@ -110,7 +111,7 @@ def generate_query_params(
     if author:
         author = resolve_handle_to_did(author, token)
 
-    print(f"Generated query parameters: {locals()}")
+    #print(f"Generated query parameters: {locals()}")
     return {
         "q": query,
         "sort": sort,
@@ -123,7 +124,8 @@ def generate_query_params(
         "url": url,
         "tag": tags,
         "limit": limit,
-        "cursor": cursor
+        "cursor": cursor,
+        "posts_limit": posts_limit
     }
 
 
@@ -137,33 +139,48 @@ def search_posts(params, token):
     :param sort: Sorting order ('latest' or 'top').
     :return: List of posts.
     """
+    #pylint: disable =E1102
     posts = []
     url = f"{BASE_URL}/app.bsky.feed.searchPosts"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
     }
-    counter = 0
-    while True:
-        counter += 1
-        try:
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            # print(response)
-            response.raise_for_status()
-            posts = response.json().get("posts", []) + posts
-            data = response.json()
 
-            next_cursor = data.get("cursor")
-            if not next_cursor:
+    total_fetched = 0
+    posts_limit = params.get("posts_limit")
+
+    with alive_bar(posts_limit) as progress:
+        while True:
+            try:
+                response = requests.get(url, headers=headers, params=params, timeout=10)
+                # print(response)
+                response.raise_for_status()
+                data = response.json()
+
+                #Check if we have reached our overall posts limit
+                new_posts = data.get("posts", [])
+                posts.extend(new_posts)
+                total_fetched += len(new_posts)
+
+                #Update progress bar
+                progress(len(new_posts))
+
+                if posts_limit and total_fetched >= posts_limit:
+                    return posts[:posts_limit]
+
+                #Move to the enxt page if available
+                next_cursor = data.get("cursor")
+                if not next_cursor:
+                    return posts
+
+                params["cursor"] = next_cursor
+            except requests.exceptions.RequestException as err:
+                print(f"Error fetching posts: {err}")
+                print(
+                    "Response:", response.text if "response" in locals() else "No response"
+                )
                 return posts
-
-            params["cursor"] = next_cursor
-        except requests.exceptions.RequestException as err:
-            print(f"Error fetching posts: {err}")
-            print(
-                "Response:", response.text if "response" in locals() else "No response"
-            )
-            return posts
 
 
 def extract_post_data(posts):
@@ -230,13 +247,8 @@ if __name__ == "__main__":
     # Get user input for the search query and date range
     search_query = input("Enter your Query: ")
 
-    # Authenticate and create a session
-    print("Authenticating...")
-    access_token = create_session()
-    print("Authentication successful.")
-
     query_param = generate_query_params(
-        token=access_token, query=search_query)
+        token=access_token, query=search_query, posts_limit=10000)
 
 
     # Fetch posts
