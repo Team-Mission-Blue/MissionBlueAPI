@@ -6,3 +6,4 @@ openpyxl
 ruff
 pylint
 tox
+click
