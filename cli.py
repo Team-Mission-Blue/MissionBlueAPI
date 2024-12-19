@@ -117,6 +117,7 @@ lang_dict = {
     'Yoruba': 'yo',
     'Zhuang': 'za',
     'Zulu': 'zu',
+    '':''
 }
 
 @click.command()
@@ -206,7 +207,7 @@ lang_dict = {
     help='Set the maximum number of posts to retrieve (default: 25).'
 )
 
-def params(query="", sort="", since="", until="", mentions="", author="", lang='English', domain="", tags=tuple(), limit=25):
+def params(query="", sort="", since="", until="", mentions="", author="", lang='', domain="", tags=tuple(), limit=25):
     """
     method that tests if each click param flag is being passed in correctly
     """
@@ -218,7 +219,7 @@ def params(query="", sort="", since="", until="", mentions="", author="", lang='
     click.echo(f"Until: {until}")
     click.echo(f"Mentions: {mentions}")
     click.echo(f"Author: {author}")
-    click.echo(f"Language: {lang_dict.get(lang, 'English')}")
+    click.echo(f"Language: {lang_dict.get(lang, None)}")
     click.echo(f"Domain: {domain}")
     click.echo(f"Tags: {list(tags)}")
     click.echo(f"Limit: {limit}")
