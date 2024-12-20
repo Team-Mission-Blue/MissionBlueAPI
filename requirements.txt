@@ -7,3 +7,4 @@ ruff
 pylint
 tox
 click
+alive_progress
