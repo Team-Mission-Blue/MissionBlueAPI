@@ -230,11 +230,6 @@ if __name__ == "__main__":
     # Get user input for the search query and date range
     search_query = input("Enter your Query: ")
 
-    # Authenticate and create a session
-    print("Authenticating...")
-    access_token = create_session()
-    print("Authentication successful.")
-
     query_param = generate_query_params(
         token=access_token, query=search_query)
 
