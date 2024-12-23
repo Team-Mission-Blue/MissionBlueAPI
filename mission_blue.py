@@ -262,7 +262,7 @@ def extract_post_data_from_csv(path) -> list[dict]:
             post_from_csv.append(lines)
     return post_from_csv
 
-def save_to_csv(data, filename):
+def save_to_csv(data, path_to_file):
     """
     Save post data to a CSV file.
 
@@ -270,12 +270,12 @@ def save_to_csv(data, filename):
     :param filename: Output CSV filename.
     """
     if data:
-        if os.path.isfile(filename):
-            data += extract_post_data_from_csv(filename) 
-            os.remove(filename)
+        if os.path.isfile(path_to_file):
+            data += extract_post_data_from_csv(path_to_file) 
+            os.remove(path_to_file)
         data_frame = pd.DataFrame(data)
-        data_frame.to_csv(filename, index=False)
-        print(f"Data saved to {filename}")
+        data_frame.to_csv(path_to_file, index=False)
+        print(f"Data saved to {path_to_file}")
     else:
         print("No posts to save.")
 
