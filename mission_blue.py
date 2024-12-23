@@ -5,7 +5,6 @@ This module conatins the BlueSky Web Scrapper
 import os
 import sys
 import csv
-import shutil
 from dotenv import load_dotenv
 import requests
 import pandas as pd
@@ -276,8 +275,6 @@ def save_to_csv(data, filename):
             os.remove(filename)
         data_frame = pd.DataFrame(data)
         data_frame.to_csv(filename, index=False)
-        shutil.move(f"{filename}", DIRECTORY_NAME)
-        print(f"Data saved to {DIRECTORY_NAME}/{filename}")
         print(f"Data saved to {filename}")
     else:
         print("No posts to save.")
@@ -312,4 +309,4 @@ if __name__ == "__main__":
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    save_to_csv(post_data, f"{search_query}.csv")
+    save_to_csv(post_data, f"./{DIRECTORY_NAME}/{search_query}.csv")
