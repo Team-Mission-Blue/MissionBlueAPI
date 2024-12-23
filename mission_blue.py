@@ -4,7 +4,7 @@ This module conatins the BlueSky Web Scrapper
 
 import os
 import sys
-import re
+import csv
 import shutil
 from dotenv import load_dotenv
 import requests
@@ -166,6 +166,13 @@ def extract_post_data(posts):
             print(f"Missing data in post: {err}")
     return extracted_data
 
+def extract_post_data_from_csv(path) -> list[dict]:
+    post_from_csv = []
+    with open(path, mode ='r') as file:    
+       csvFile = csv.DictReader(file)
+       for lines in csvFile:
+            post_from_csv.append(lines)
+    return post_from_csv
 
 def save_to_csv(data, filename):
     """
@@ -176,6 +183,7 @@ def save_to_csv(data, filename):
     """
     if data:
         if os.path.isfile(filename):
+            data += extract_post_data_from_csv(filename) 
             os.remove(filename)
         data_frame = pd.DataFrame(data)
         data_frame.to_csv(filename, index=False)
