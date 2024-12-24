@@ -305,7 +305,7 @@ def search_posts(params, token):
     }
 
     total_fetched = 0
-    posts_limit = params.get("posts_limit")
+    posts_limit = params.get("posts_limit", 1000)
 
     with alive_bar(posts_limit) as progress:
         while True:
@@ -324,11 +324,13 @@ def search_posts(params, token):
                 progress(len(new_posts))
 
                 if posts_limit and total_fetched >= posts_limit:
+                    print(f"Fetched {total_fetched} posts, total: {total_fetched}/{posts_limit}")
                     return posts[:posts_limit]
 
                 #Move to the enxt page if available
                 next_cursor = data.get("cursor")
                 if not next_cursor:
+                    print(f"All posts fetched. Total: {total_fetched}")
                     return posts
 
                 params["cursor"] = next_cursor
@@ -483,12 +485,26 @@ def save_to_csv(data, filename):
 
 @click.option(
     '--limit',
-    type=click.IntRange(1,100),
+    type=click.IntRange(1, 100),
     required=False,
-    help='Set the maximum number of posts to retrieve (default: 25).'
+    default=25,
+    help=(
+        'Set the maximum number of posts to retrieve in a single API response. This controls the page size for requests. '
+        'Pagination is always enabled, and this option determines how many posts each request retrieves, up to a maximum of 100. '
+        'The default value is 25 if not specified.'
+    )
+)
+@click.option(
+    '--posts_limit',
+    type=click.IntRange(1, None),
+    required=False,
+    help=(
+        'Set the total number of posts to fetch from the API across all paginated responses. This value limits the total data retrieved '
+        'even if multiple API calls are required. If not specified, 1000 posts will be recieved.'
+    )
 )
 
-def main(query="", sort="", since="", until="", mentions="", author="", lang="", domain="", url="", tags=tuple(), limit=25):
+def main(query="", sort="", since="", until="", mentions="", author="", lang="", domain="", url="", tags=tuple(), limit=25, posts_limit=1000):
     """
     method that tests if each click param flag is being passed in correctly
     """
@@ -505,7 +521,7 @@ def main(query="", sort="", since="", until="", mentions="", author="", lang="",
 
     query_param = generate_query_params(
         access_token, query, sort, since, until, mentions,
-        author, lang, domain, url, tags, limit, cursor="", posts_limit=1000)
+        author, lang, domain, url, tags, limit, posts_limit=posts_limit, cursor="")
 
 
     # Fetch posts
