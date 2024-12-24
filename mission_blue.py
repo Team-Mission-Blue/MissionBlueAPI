@@ -9,6 +9,123 @@ from dotenv import load_dotenv
 import requests
 import pandas as pd
 from alive_progress import alive_bar
+import click
+
+# pylint: disable=C0301
+
+lang_dict = {
+    'Afar': 'aa',
+    'Abkhazian': 'ab',
+    'Afrikaans': 'af',
+    'Akan': 'ak',
+    'Albanian': 'sq',
+    'Amharic': 'am',
+    'Arabic': 'ar',
+    'Aragonese': 'an',
+    'Armenian': 'hy',
+    'Assamese': 'as',
+    'Avaric': 'av',
+    'Avestan': 'ae',
+    'Aymara': 'ay',
+    'Azerbaijani': 'az',
+    'Bashkir': 'ba',
+    'Bambara': 'bm',
+    'Basque': 'eu',
+    'Belarusian': 'be',
+    'Bengali': 'bn',
+    'Bihari languages': 'bh',
+    'Bislama': 'bi',
+    'Tibetan': 'bo',
+    'Bosnian': 'bs',
+    'Breton': 'br',
+    'Bulgarian': 'bg',
+    'Burmese': 'my',
+    'Catalan': 'ca',
+    'Czech': 'cs',
+    'Chamorro': 'ch',
+    'Chechen': 'ce',
+    'Chinese': 'zh',
+    'Church Slavic': 'cu',
+    'Chuvash': 'cv',
+    'Cornish': 'kw',
+    'Corsican': 'co',
+    'Cree': 'cr',
+    'Welsh': 'cy',
+    'Danish': 'da',
+    'German': 'de',
+    'Divehi': 'dv',
+    'Dzongkha': 'dz',
+    'Greek, Modern (1453-)': 'el',
+    'English': 'en',
+    'Esperanto': 'eo',
+    'Estonian': 'et',
+    'Ewe': 'ee',
+    'Faroese': 'fo',
+    'Persian': 'fa',
+    'Fijian': 'fj',
+    'Finnish': 'fi',
+    'French': 'fr',
+    'Western Frisian': 'fy',
+    'Fulah': 'ff',
+    'Georgian': 'ka',
+    'Gaelic': 'gd',
+    'Irish': 'ga',
+    'Galician': 'gl',
+    'Manx': 'gv',
+    'Guarani': 'gn',
+    'Pushto': 'ps',
+    'Quechua': 'qu',
+    'Romansh': 'rm',
+    'Romanian': 'ro',
+    'Russian': 'ru',
+    'Sango': 'sg',
+    'Sanskrit': 'sa',
+    'Sinhala': 'si',
+    'Slovak': 'sk',
+    'Slovenian': 'sl',
+    'Northern Sami': 'se',
+    'Samoan': 'sm',
+    'Shona': 'sn',
+    'Sindhi': 'sd',
+    'Somali': 'so',
+    'Sotho, Southern': 'st',
+    'Spanish': 'es',
+    'Sardinian': 'sc',
+    'Serbian': 'sr',
+    'Swati': 'ss',
+    'Sundanese': 'su',
+    'Swahili': 'sw',
+    'Swedish': 'sv',
+    'Tahitian': 'ty',
+    'Tamil': 'ta',
+    'Tatar': 'tt',
+    'Telugu': 'te',
+    'Tajik': 'tg',
+    'Tagalog': 'tl',
+    'Thai': 'th',
+    'Tigrinya': 'ti',
+    'Tonga (Tonga Islands)': 'to',
+    'Tswana': 'tn',
+    'Tsonga': 'ts',
+    'Turkmen': 'tk',
+    'Turkish': 'tr',
+    'Twi': 'tw',
+    'Uighur': 'ug',
+    'Ukrainian': 'uk',
+    'Urdu': 'ur',
+    'Uzbek': 'uz',
+    'Venda': 've',
+    'Vietnamese': 'vi',
+    'Volapük': 'vo',
+    'Walloon': 'wa',
+    'Wolof': 'wo',
+    'Xhosa': 'xh',
+    'Yiddish': 'yi',
+    'Yoruba': 'yo',
+    'Zhuang': 'za',
+    'Zulu': 'zu',
+    '':''
+}
 
 
 # Load environment variables from the .env file
@@ -274,21 +391,121 @@ def save_to_csv(data, filename):
         print("No posts to save.")
 
 
-if __name__ == "__main__":
+# Begin Click CLI
 
+@click.command()
+@click.option(
+    '-q',
+    '--query',
+    type=str,
+    required=True,
+    help='Search query string. Required'
+)
+
+@click.option(
+    '-s',
+    '--sort',
+    type=click.Choice(['top', 'latest'], case_sensitive=False),
+    required=False,
+    help='Rank results by "top" or "latest',
+)
+
+@click.option(
+    '--since',
+    type=str,
+    required=False,
+    help=(
+        'Filter results for posts after the specified datetime (inclusive). '
+        'Use ISO 8601 format: "YYYY-MM-DD" or full datetime. Uses "sortAt" timestamp.'
+    )
+)
+
+@click.option(
+    '--until',
+    type=str,
+    required=False,
+    help=(
+        'Filter results for posts before the specified datetime (not inclusive). '
+        'Use ISO 8601 format: "YYYY-MM-DD" or full datetime. Uses "sortAt" timestamp.'
+    )
+)
+
+@click.option(
+    '-m',
+    '--mentions',
+    type=str,
+    help='Filter posts mentioning the specified account (omit the @ symbol).'
+)
+
+@click.option(
+    '-a',
+    '--author',
+    type=str,
+    required=False,
+    help='Filter posts by the specified account (omit the @ symbol).'
+)
+
+@click.option(
+    '-l',
+    '--lang',
+    type=str,
+    required=False,
+    help=f"Filter posts by language.\n\nLanguage Options:\n\n {', '.join(list(lang_dict.keys()))}\n\n"
+)
+
+@click.option(
+    '-d',
+    '--domain',
+    type=str,
+    required=False,
+    help='Filter posts containing links to the specified domain.'
+)
+
+@click.option(
+    '-u',
+    '--url',
+    type=str,
+    required=False,
+    help='Filter posts containing links to the specified url.'
+)
+
+@click.option(
+    '-t',
+    '--tags',
+    type=str,
+    multiple=True,
+    required=False,
+    help=(
+        'Filter posts by hashtag (omit the # symbol). '
+        'Multiple tags can be specified: -t tag1 -t tag2. OR -t "tag1, tag2"'
+    )
+)
+
+@click.option(
+    '--limit',
+    type=click.IntRange(1,100),
+    required=False,
+    help='Set the maximum number of posts to retrieve (default: 25).'
+)
+
+def main(query="", sort="", since="", until="", mentions="", author="", lang="", domain="", url="", tags=tuple(), limit=25):
+    """
+    method that tests if each click param flag is being passed in correctly
+    """
+    # pylint: disable=R0913
+    # pylint: disable=R0914
+    # pylint: disable=R0917
     print("Loading Credentials...")
-    BLUESKY_HANDLE, BLUESKY_APP_PASSWORD = load_credentials()
+    bluesky_handle, bluesky_app_password = load_credentials()
 
     # Authenticate and create a session
     print("Authenticating...")
-    access_token = create_session(BLUESKY_HANDLE, BLUESKY_APP_PASSWORD)
+    access_token = create_session(bluesky_handle, bluesky_app_password)
     print("Authentication successful.")
 
-    # Get user input for the search query and date range
-    search_query = input("Enter your Query: ")
-
     query_param = generate_query_params(
-        token=access_token, query=search_query, posts_limit=10000)
+        access_token, query, sort, since, until, mentions,
+        author, lang, domain, url, tags, limit, cursor="", posts_limit=1000)
 
 
     # Fetch posts
@@ -303,4 +520,7 @@ if __name__ == "__main__":
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    save_to_csv(post_data, f"{search_query}.csv")
+    save_to_csv(post_data, f"{query}.csv")
+
+if __name__ == "__main__":
+    main()
