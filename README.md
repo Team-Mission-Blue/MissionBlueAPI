@@ -56,7 +56,7 @@ This will set up the Python virtual environment so that you can run the Bluesky 
 Run this command to conduct the scrape:
 
 ```zsh
-python3 BlueSkyScraper.py
+python3 BlueSkyScraper.py <update with instructions on how to use the CLI>
 ```
 
 You will then be prompted to enter your query string.
