@@ -262,6 +262,15 @@ def extract_post_data_from_csv(path) -> list[dict]:
             post_from_csv.append(lines)
     return post_from_csv
 
+def remove_duplicates(data):
+    post_links = set()
+    unqiue_data = []
+    for post in data:
+        if post["post_link"] not in post_links:
+            post_links.add(post["post_link"])
+            unqiue_data.append(post)
+    return unqiue_data
+
 def save_to_csv(data, path_to_file):
     """
     Save post data to a CSV file.
@@ -272,6 +281,7 @@ def save_to_csv(data, path_to_file):
     if data:
         if os.path.isfile(path_to_file):
             data += extract_post_data_from_csv(path_to_file) 
+            data = remove_duplicates(data)
             os.remove(path_to_file)
         data_frame = pd.DataFrame(data)
         data_frame.to_csv(path_to_file, index=False)
