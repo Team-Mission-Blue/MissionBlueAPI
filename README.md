@@ -56,9 +56,44 @@ This will set up the Python virtual environment so that you can run the Bluesky 
 Run this command to conduct the scrape:
 
 ```zsh
-python3 BlueSkyScraper.py
+python3 mission_blue.py -q "Example search term"
 ```
 
-You will then be prompted to enter your query string.
-
 Once you run the script you should see a directory named DataMiningProcessing. Within this directory will contain csv files that contain the posts corresponding to each sport scraped.
+
+## Using the CLI to Search for Posts
+
+The CLI is the main way to interact with this Python script, allowing you to search or BlueSky posts by providing query parameters. Here's how you can use it effectively:
+
+* --query (required): The search term for the posts. This is mandatory.
+
+* --limit: The maximum number of posts to retrieve in a single response (default: 25).
+
+* --sort: The sorting criteria for the results. Available options:
+   top: Retrieves top-ranked posts.
+   latest: Fetches the most recent posts.
+
+* --since: The start date for filtering posts (in ISO 8601 format).
+
+* --until: The end date for filtering posts (in ISO 8601 format).
+
+* --mentions: Filters posts mentioning a specific handle. Handles will be resolved to DIDs using the provided API token.
+
+* --author: The author of the posts (handle or DID).
+
+* --lang: Filters posts by language.
+
+* --domain: Includes posts containing a specific domain URL.
+
+* --url: Searches for posts containing a specific URL.
+
+* --tags: Filters posts by tags (provide a comma-separated list).
+
+* --posts_limit: The total number of posts to retrieve across all API responses (default: 500).
+
+> [!TIP]
+> Run the following code to find out any other aliases you can write to specify these flags and query params!
+>
+>```zsh
+>python3 mission_blue.py --help
+>```
