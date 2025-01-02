@@ -584,7 +584,7 @@ def main(query="", sort="", since="", until="", mentions="", author="", lang="",
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    save_to_csv(post_data, f"./{DIRECTORY_NAME}/{search_query}.csv")
+    save_to_csv(post_data, f"./{DIRECTORY_NAME}/{query}.csv")
 
 if __name__ == "__main__":
     main()
