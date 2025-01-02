@@ -4,7 +4,7 @@ This module conatins the BlueSky Web Scrapper
 
 import os
 import sys
-import shutil
+import csv
 from dotenv import load_dotenv
 import requests
 import pandas as pd
@@ -194,7 +194,9 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
     headers = {"Authorization": f"Bearer {token}"}
 
     try:
-        response = requests.get(url, headers=headers, params={"handle": handle}, timeout=10)
+        response = requests.get(
+            url, headers=headers, params={"handle": handle}, timeout=10
+        )
         response.raise_for_status()
         return response.json().get("did", handle)
     except requests.exceptions.RequestException as err:
@@ -203,9 +205,20 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
 
 
 def generate_query_params(
-    token: str, query="", sort="", since="", until="",
-    mentions="", author="", lang="", domain="", url="",
-    tags=None, limit=25, cursor="", posts_limit=500
+    token: str,
+    query="",
+    sort="",
+    since="",
+    until="",
+    mentions="",
+    author="",
+    lang="",
+    domain="",
+    url="",
+    tags=None,
+    limit=25,
+    cursor="",
+    posts_limit=500,
 ):
     # pylint: disable=R0917
     # pylint: disable=R0913
@@ -215,11 +228,11 @@ def generate_query_params(
     Args:
         token (str): The authorization token required to resolve handles.
         query (str, required): The search term for the BlueSky posts.
-        sort (str, optional): The sorting criteria for results. 
+        sort (str, optional): The sorting criteria for results.
             - Options include "top" for top posts or "latest" for the latest posts.
         since (str, optional): The start date for posts (ISO 8601 format).
         until (str, optional): The end date for posts (ISO 8601 format).
-        mentions (str, optional): Mentions to filter posts by. 
+        mentions (str, optional): Mentions to filter posts by.
             - Handles will be resolved to DIDs using the provided token.
         author (str, optional): The author of the posts (handle or DID).
             - Handles will be resolved to DIDs using the provided token.
@@ -227,7 +240,7 @@ def generate_query_params(
         domain (str, optional): A domain URL included in the posts.
         url (str, optional): A specific URL included in the posts.
         tags (list, optional): Tags to filter posts by (each tag <= 640 characters).
-        limit (int, optional): The maximum number of posts to retrieve in a single response. 
+        limit (int, optional): The maximum number of posts to retrieve in a single response.
             - Defaults to 25.
         cursor (str, optional): A pagination token to fetch a specific set of results.
             - Use the `cursor` value returned in the previous API response to navigate through paginated results.
@@ -244,7 +257,7 @@ def generate_query_params(
     if author:
         author = resolve_handle_to_did(author, token)
 
-    #print(f"Generated query parameters: {locals()}")
+    # print(f"Generated query parameters: {locals()}")
     return {
         "q": query,
         "sort": sort,
@@ -258,7 +271,7 @@ def generate_query_params(
         "tag": tags,
         "limit": limit,
         "cursor": cursor,
-        "posts_limit": posts_limit
+        "posts_limit": posts_limit,
     }
 
 
@@ -272,22 +285,22 @@ def search_posts(params, token):
     Args:
         params (dict): The query parameters for the API request.
             - query (str, required): The search term for the BlueSky posts.
-            - sort (str, optional): The sorting criteria for results. 
+            - sort (str, optional): The sorting criteria for results.
                Options include "top" for top posts or "latest" for the latest posts.
             - since (str, optional): The start date for posts (ISO 8601 format).
             - until (str, optional): The end date for posts (ISO 8601 format).
-            - mentions (str, optional): Mentions to filter posts by. 
+            - mentions (str, optional): Mentions to filter posts by.
             - Handles will be resolved to DIDs using the provided token.
             - author (str, optional): The author of the posts (handle or DID).
             - lang (str, optional): The language of the posts.
             - domain (str, optional): A domain URL included in the posts.
             - url (str, optional): A specific URL included in the posts.
             - tags (list, optional): Tags to filter posts by (each tag <= 640 characters).
-            - limit (int, optional): The maximum number of posts to retrieve in a single response. 
+            - limit (int, optional): The maximum number of posts to retrieve in a single response.
                 Defaults to 25.
             - cursor (str, optional): Pagination token for continuing from a previous request.
             - posts_limit (int, optional): The maximum number of posts to retrieve across all responses.
-                Defaults to 500. 
+                Defaults to 500.
 
     Returns:
         list: A list of posts matching the search criteria.
@@ -315,19 +328,19 @@ def search_posts(params, token):
                 response.raise_for_status()
                 data = response.json()
 
-                #Check if we have reached our overall posts limit
+                # Check if we have reached our overall posts limit
                 new_posts = data.get("posts", [])
                 posts.extend(new_posts)
                 total_fetched += len(new_posts)
 
-                #Update progress bar
+                # Update progress bar
                 progress(len(new_posts))
 
                 if posts_limit and total_fetched >= posts_limit:
                     print(f"Fetched {total_fetched} posts, total: {total_fetched}/{posts_limit}")
                     return posts[:posts_limit]
 
-                #Move to the enxt page if available
+                # Move to the enxt page if available
                 next_cursor = data.get("cursor")
                 if not next_cursor:
                     print(f"All posts fetched. Total: {total_fetched}")
@@ -337,7 +350,8 @@ def search_posts(params, token):
             except requests.exceptions.RequestException as err:
                 print(f"Error fetching posts: {err}")
                 print(
-                    "Response:", response.text if "response" in locals() else "No response"
+                    "Response:",
+                    response.text if "response" in locals() else "No response",
                 )
                 return posts
 
@@ -374,7 +388,41 @@ def extract_post_data(posts):
     return extracted_data
 
 
-def save_to_csv(data, filename):
+def extract_post_data_from_csv(path) -> list[dict]:
+    """
+    Extract data from existing csv file.
+
+    :param path: Path to file.
+    :return: List of dictionaries containing post data from file.
+    """
+    post_from_csv = []
+    with open(path, mode="r", encoding="utf-8") as file:
+        csv_file = csv.DictReader(file)
+        for lines in csv_file:
+            post_from_csv.append(lines)
+    return post_from_csv
+
+
+def remove_duplicates(data):
+    """
+    This function removes duplicate entries from a list of dictionaries using the post_link key.
+
+    Args:
+        data list(dict): List of dictionaries with some duplicate entries.
+
+    Returns:
+        list(dict): List of dictionaries with duplicates removed.
+    """
+    post_links = set()
+    unqiue_data = []
+    for post in data:
+        if post["post_link"] not in post_links:
+            post_links.add(post["post_link"])
+            unqiue_data.append(post)
+    return unqiue_data
+
+
+def save_to_csv(data, path_to_file):
     """
     Save post data to a CSV file.
 
@@ -382,13 +430,13 @@ def save_to_csv(data, filename):
     :param filename: Output CSV filename.
     """
     if data:
-        if os.path.isfile(filename):
-            os.remove(filename)
+        if os.path.isfile(path_to_file):
+            data += extract_post_data_from_csv(path_to_file)
+            data = remove_duplicates(data)
+            os.remove(path_to_file)
         data_frame = pd.DataFrame(data)
-        data_frame.to_csv(filename, index=False)
-        shutil.move(f"{filename}", DIRECTORY_NAME)
-        print(f"Data saved to {DIRECTORY_NAME}/{filename}")
-        print(f"Data saved to {filename}")
+        data_frame.to_csv(path_to_file, index=False)
+        print(f"Data saved to {path_to_file}")
     else:
         print("No posts to save.")
 
@@ -536,7 +584,7 @@ def main(query="", sort="", since="", until="", mentions="", author="", lang="",
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    save_to_csv(post_data, f"{query}.csv")
+    save_to_csv(post_data, f"./{DIRECTORY_NAME}/{query}.csv")
 
 if __name__ == "__main__":
     main()
