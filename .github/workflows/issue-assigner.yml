@@ -3,6 +3,8 @@ name: Issue assignment
 on:
     issues:
         types: [opened]
+    pull_request:
+        types: [opened]
 
 jobs:
     auto-assign:
