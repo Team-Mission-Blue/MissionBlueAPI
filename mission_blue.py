@@ -2,11 +2,13 @@
 This module conatins the BlueSky Web Scrapper
 """
 
+import os
+import sys
+from dotenv import load_dotenv
 import requests
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
 import click
-import auth
 import file
 
 # pylint: disable=C0301
@@ -126,17 +128,42 @@ lang_dict = {
 }
 
 
-# DIRECTORY_NAME = "Scrapped Posts"
+# Load environment variables from the .env file
+def load_credentials() -> tuple[str, str]:
+    """
+    Validates and returns user BlueSky credentials
+    Returns:
+        tuple[str, str]: This ordered pair contains the Bluesky Username and Password
+    """
+    # pylint: disable=C0301
+    if load_dotenv():
+        # Access credentials from the environment variables
+        handle = os.getenv("BLUESKY_HANDLE")
+        password = os.getenv("BLUESKY_APP_PASSWORD")
+        assert handle != "", "BLUESKY_HANDLE can not be empty"
+        assert password != "", "BLUESKY_APP_PASSWORD can not be empty"
+        return (handle, password)
+    print(".env does not exist")
+    sys.exit(1)
 
-# # Generates Directory where scrapped post will reside in
-# if not os.path.isdir(DIRECTORY_NAME):
-#     try:
-#         os.mkdir(DIRECTORY_NAME)
-#         print(f"Directory '{DIRECTORY_NAME}' created successfully.")
-#     except FileExistsError:
-#         print(f"Directory '{DIRECTORY_NAME}' already exists.")
-#     except PermissionError:
-#         print(f"Permission denied: Unable to create '{DIRECTORY_NAME}'.")
+
+def create_session(username: str, password: str):
+    """
+    Authenticate and create a session to get the access token.
+    :return: Access token (accessJwt) for authentication.
+    """
+    url = "https://bsky.social/xrpc/com.atproto.server.createSession"
+    payload = {"identifier": username, "password": password}
+
+    try:
+        response = requests.post(url, json=payload, timeout=10)
+        response.raise_for_status()
+        session = response.json()
+        return session["accessJwt"]
+    except requests.exceptions.RequestException as err:
+        print("Error during authentication:", err)
+        print("Response:", response.text if "response" in locals() else "No response")
+        sys.exit(1)
 
 
 def resolve_handle_to_did(handle: str, token: str) -> str:
@@ -431,11 +458,11 @@ def main(
     # pylint: disable=R0914
     # pylint: disable=R0917
     print("Loading Credentials...")
-    bluesky_handle, bluesky_app_password = auth.load_credentials()
+    bluesky_handle, bluesky_app_password = load_credentials()
 
     # Authenticate and create a session
     print("Authenticating...")
-    access_token = auth.create_session(bluesky_handle, bluesky_app_password)
+    access_token = create_session(bluesky_handle, bluesky_app_password)
     print("Authentication successful.")
 
     query_param = generate_query_params(
