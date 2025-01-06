@@ -3,9 +3,7 @@ This module conatins the BlueSky Web Scrapper
 """
 
 import os
-import sys
 import shutil
-from dotenv import load_dotenv
 import requests
 import pandas as pd
 from alive_progress import alive_bar
