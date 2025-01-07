@@ -319,7 +319,7 @@ def search_posts(params, token):
     }
 
     total_fetched = 0
-    posts_limit = params.get("posts_limit", 1000)
+    posts_limit = params.get("posts_limit")
     butterfly_bar = bar_factory("✨", tip="🦋", errors="🔥🧯👩‍🚒")
 
     with alive_bar(posts_limit, bar=butterfly_bar, spinner="waves") as progress:
@@ -514,6 +514,7 @@ def save_to_csv(data, filename):
     '--posts_limit',
     type=click.IntRange(1, None),
     required=False,
+    default=1000,
     help=(
         'Set the total number of posts to fetch from the API across all paginated responses. This value limits the total data retrieved '
         'even if multiple API calls are required. If not specified, 1000 posts will be recieved.'
