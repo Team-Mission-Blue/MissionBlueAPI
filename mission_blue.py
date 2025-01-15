@@ -223,20 +223,6 @@ def generate_query_params(
     limit=25,
     cursor="",
     posts_limit=500,
-    token: str,
-    query="",
-    sort="",
-    since="",
-    until="",
-    mentions="",
-    author="",
-    lang="",
-    domain="",
-    url="",
-    tags=None,
-    limit=25,
-    cursor="",
-    posts_limit=500,
 ):
     # pylint: disable=R0917
     # pylint: disable=R0913
@@ -602,8 +588,9 @@ def main(query="", sort="", since="", until="", mentions="", author="", lang="",
     print("Authentication successful.")
 
     query_param = generate_query_params(
-        token=access_token, query=search_query, posts_limit=10000
-    )
+        access_token, query, sort, since, until, mentions,
+        author, lang, domain, url, tags, limit, posts_limit=posts_limit, cursor="")
+
 
     # Fetch posts
     print("Fetching posts...")
@@ -617,4 +604,7 @@ def main(query="", sort="", since="", until="", mentions="", author="", lang="",
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    save_to_csv(post_data, f"./{DIRECTORY_NAME}/{search_query}.csv")
+    save_to_csv(post_data, f"./{DIRECTORY_NAME}/{query}.csv")
+
+if __name__ == "__main__":
+    main()
