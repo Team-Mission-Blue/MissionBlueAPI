@@ -7,7 +7,6 @@ import os
 import sys
 from difflib import unified_diff
 import requests
-import urllib3
 import pandas as pd
 
 
@@ -154,8 +153,8 @@ def validate_url(url: str) -> bool:
 """
 
     try:
-        page = urllib3.request("GET", url)
-        content_string = page.data.decode("utf-8")
+        page = requests.get(url)
+        content_string = page.text
         diff = unified_diff(content_string, no_content_template)
         diff_string = "".join(diff)
         if diff_string == "":
