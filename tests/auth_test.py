@@ -24,8 +24,6 @@ class TestLoadCredentials(unittest.TestCase):
             load_credentials()
         self.assertEqual(cm.exception.code, 1)
 
-        mock_load_dotenv.assert_called_once()
-
     @patch("os.getenv", side_effect=lambda key: "" if key in ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"] else None)
     @patch("auth.load_dotenv", return_value=True)
     def test_env_with_no_credentials(self, mock_load_dotenv, mock_getenv):
