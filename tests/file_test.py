@@ -5,7 +5,6 @@
 import tempfile
 import os
 import unittest
-from unittest import mock
 
 
 from file import (
@@ -121,22 +120,11 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                 result = extract_post_data(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
                 
-    def mock_open(*args, **kwargs):
-        if args[0] == "good_path":
-            # mocked open for path "foo"
-            return mock.mock_open(read_data="""author,content,created_at,post_link\nuser1,post1,2023-01-01,link1\nuser2,post2,2023-01-02,link2\nuser3,post3,2023-01-03,link3""")#(*args, **kwargs)
-        else:
-            return []
-        # unpatched version for every other path
-        # return open(*args, **kwargs)
-
-    @mock.patch("builtins.open", mock_open)
     def test_extract_post_data_from_csv(self):
-
         cases = {
             "No Path": TestCase(data="", expected_result=[]),
             "File Contains Content": TestCase(
-                data="good_path",
+                data="""author,content,created_at,post_link\nuser1,"post1",2023-01-01,link1\nuser2,"post2",2023-01-02,link2\nuser3,"post3",2023-01-03,link3""",
                 expected_result=[
                     {
                         "author": "user1",
@@ -153,7 +141,7 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                     {
                         "author": "user3",
                         "content": "post3",
-                        "created_at": "2023-01-01",
+                        "created_at": "2023-01-03",
                         "post_link": "link3",
                     },
                 ],
@@ -163,14 +151,16 @@ class TestMissionBlueFileMethods(unittest.TestCase):
         
 
         for case_name, case in cases.items():
-            with self.subTest(case_name):
-                    # print(case.get_data())
-                    # print(os.path.isfile(case.get_data()))
-                    # print("tmp file path:",tmpfilepath)
-                print(case.get_data())
-                result = extract_post_data_from_csv(case.get_data())
-                    # print(f"case:{case_name}\nresult: {result}")
-                self.assertEqual(result, case.get_expected_result())
+            with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp:
+                with self.subTest(case_name):
+                    content = case.get_data()
+                    if temp.write(content):
+                        # If this line is commented, the test will fail. I believe that it is because
+                        # the temp file is deleted once it is writen to causing the file to be empty
+                        # when the extract_post_data_from_csv function is called in the next line.
+                        print(f"file: {temp.read()}")
+                        result = extract_post_data_from_csv(temp.name)
+                        self.assertListEqual(result, case.get_expected_result())
 
     def test_remove_duplicates(self):
         """
