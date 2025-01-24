@@ -209,6 +209,10 @@ def extract_post_data_from_csv(path: str) -> list[dict]:
     :return: List of dictionaries containing post data from file.
     """
     post_from_csv = []
+    if not os.path.isfile(path):
+        print(f"File {path} not found.")
+        return post_from_csv
+      
     with open(path, mode="r", encoding="utf-8") as file:
         csv_file = csv.DictReader(file)
         for lines in csv_file:
@@ -256,3 +260,6 @@ def save_to_csv(data: list[dict], path_to_file:str) -> None:
 
 # Invalid URL
 # validate_url("https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22")
+
+
+print(extract_post_data_from_csv("Scrapped Posts/extractMe.csv"))
