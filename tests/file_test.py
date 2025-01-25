@@ -3,15 +3,14 @@
 """
 
 import tempfile
-import os
 import unittest
-
 
 from file import (
     remove_duplicates,
     extract_post_data,
     extract_post_data_from_csv,
     validate_url,
+    save_to_csv,
 )
 
 
@@ -119,11 +118,15 @@ class TestMissionBlueFileMethods(unittest.TestCase):
             with self.subTest(case_name):
                 result = extract_post_data(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
-                
+
     def test_extract_post_data_from_csv(self):
+        """
+        Test case for the extract_post_data_from_csv function.
+        """
         cases = {
             "No Path": TestCase(data="", expected_result=[]),
             "File Contains Content": TestCase(
+                # pylint: disable=line-too-long
                 data="""author,content,created_at,post_link\nuser1,"post1",2023-01-01,link1\nuser2,"post2",2023-01-02,link2\nuser3,"post3",2023-01-03,link3""",
                 expected_result=[
                     {
@@ -147,13 +150,12 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                 ],
             ),
         }
-        
-        
 
         for case_name, case in cases.items():
-            with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp:
+            with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp:
                 with self.subTest(case_name):
                     content = case.get_data()
+                    # pylint: disable=line-too-long
                     if temp.write(content):
                         # If this line is commented, the test will fail. I believe that it is because
                         # the temp file is deleted once it is writen to causing the file to be empty
@@ -260,6 +262,87 @@ class TestMissionBlueFileMethods(unittest.TestCase):
             with self.subTest(case_name):
                 result = remove_duplicates(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
+
+    def test_save_to_csv(self):
+        """
+        Test case for the save_to_csv function.
+        """
+        cases = {
+            "No Path": TestCase(data=([{}], ""), expected_result=""),
+            "Write Data to new File": TestCase(
+                data=(
+                    [
+                        {
+                            "author": "userA",
+                            "content": "postA",
+                            "created_at": "2023-01-01",
+                            "post_link": "linkA",
+                        },
+                        {
+                            "author": "userB",
+                            "content": "postB",
+                            "created_at": "2023-01-02",
+                            "post_link": "linkB",
+                        },
+                        {
+                            "author": "userC",
+                            "content": "postC",
+                            "created_at": "2023-01-03",
+                            "post_link": "linkC",
+                        },
+                    ],
+                    "",
+                ),
+                # pylint: disable=line-too-long
+                expected_result=""""author,content,created_at,post_link\nuserA,"postA",2023-01-01,linkA\nuserB,"postB",2023-01-02,linkB\nuserC,"postC",2023-01-03,linkC""",
+            ),
+            "Write Data to existing File": TestCase(
+                data=([{}], ""), expected_result=""
+            ),
+            "File Contains Content": TestCase(
+                data=(
+                    [
+                        {
+                            "author": "userA",
+                            "content": "postA",
+                            "created_at": "2023-01-01",
+                            "post_link": "linkA",
+                        },
+                        {
+                            "author": "userB",
+                            "content": "postB",
+                            "created_at": "2023-01-02",
+                            "post_link": "linkB",
+                        },
+                        {
+                            "author": "userC",
+                            "content": "postC",
+                            "created_at": "2023-01-03",
+                            "post_link": "linkC",
+                        },
+                    ],
+                    # pylint: disable=line-too-long
+                    """author,content,created_at,post_link\nuser1,"post1",2023-01-01,link1\nuser2,"post2",2023-01-02,link2\nuser3,"post3",2023-01-03,link3""",
+                ),
+                # pylint: disable=line-too-long
+                expected_result="""author,content,created_at,post_link\nuser1,"post1",2023-01-01,link1\nuser2,"post2",2023-01-02,link2\nuser3,"post3",2023-01-03,link3\nuserA,"postA",2023-01-01,link1\nuserB,"postB",2023-01-02,linkB\nuserC,"postC",2023-01-03,linkC""",
+            ),
+        }
+
+        for case_name, case in cases.items():
+            # pylint: disable=line-too-long
+            with self.subTest(case_name):
+                with tempfile.NamedTemporaryFile(mode="w+", delete_on_close=False) as temp:
+                    new_data, existing_data = case.get_data()
+                    if temp.write(existing_data):
+                        # If this line is commented, the test will fail. I believe that it is because
+                        # the temp file is deleted once it is writen to causing the file to be empty
+                        # when the extract_post_data_from_csv function is called in the next line.
+                        print(f"file: {temp.read()}")
+                        save_to_csv(new_data, temp.name)
+                        file_content = temp.read()
+                        print(f"file_content: {file_content}")
+                        self.assertEqual(file_content, case.get_expected_result())
 
 
 if __name__ == "__main__":

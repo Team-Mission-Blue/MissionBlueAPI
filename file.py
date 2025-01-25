@@ -153,7 +153,7 @@ def validate_url(url: str) -> bool:
 """
 
     try:
-        page = requests.get(url)
+        page = requests.get(url, timeout=10)
         content_string = page.text
         diff = unified_diff(content_string, no_content_template)
         diff_string = "".join(diff)
@@ -165,7 +165,7 @@ def validate_url(url: str) -> bool:
         sys.exit(1)
 
 
-def extract_post_data(posts: list[dict])-> list[dict]:
+def extract_post_data(posts: list[dict]) -> list[dict]:
     """
     Extract relevant data from posts and filter by date range.
 
@@ -212,7 +212,7 @@ def extract_post_data_from_csv(path: str) -> list[dict]:
     if not os.path.isfile(path):
         print(f"File {path} not found.")
         return post_from_csv
-      
+
     with open(path, mode="r", encoding="utf-8") as file:
         csv_file = csv.DictReader(file)
         for lines in csv_file:
@@ -237,7 +237,7 @@ def remove_duplicates(data: list[dict]) -> list[dict]:
     return unqiue_data
 
 
-def save_to_csv(data: list[dict], path_to_file:str) -> None:
+def save_to_csv(data: list[dict], path_to_file: str) -> None:
     """
     Save post data to a CSV file.
     :param post_data: List of post data dictionaries.
@@ -253,13 +253,3 @@ def save_to_csv(data: list[dict], path_to_file:str) -> None:
         print(f"Data saved to {path_to_file}")
     else:
         print("No posts to save.")
-
-
-# Valid URL
-# validate_url("https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22m")
-
-# Invalid URL
-# validate_url("https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22")
-
-
-print(extract_post_data_from_csv("Scrapped Posts/extractMe.csv"))
