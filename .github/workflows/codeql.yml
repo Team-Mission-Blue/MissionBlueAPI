@@ -9,6 +9,9 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
+
+# For formating the yml file see: https://github.com/google/yamlfmt
+
 name: "CodeQL Advanced"
 on:
   push:
