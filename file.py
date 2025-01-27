@@ -41,7 +41,6 @@ def validate_url(url: str) -> bool:
     Preconnect to essential domains
   -->
   <link rel="preconnect" href="https://bsky.social">
-  <link rel="preconnect" href="https://bsky.network">
   <title>Bluesky</title>
 
   <!-- Hello Humans! API docs at https://atproto.com -->
@@ -119,9 +118,9 @@ def validate_url(url: str) -> bool:
     }
   </style>
 
-  <script defer="defer" src="https://web-cdn.bsky.app/static/js/94.34d93bfe.js"></script>
+  <script defer="defer" src="https://web-cdn.bsky.app/static/js/86.d4b20136.js"></script>
 <link rel="stylesheet" href="https://web-cdn.bsky.app/static/css/main.183e8650.css">
-<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.df7c994b.js"></script>
+<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.219b028f.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="https://web-cdn.bsky.app/static/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="https://web-cdn.bsky.app/static/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://web-cdn.bsky.app/static/favicon-16x16.png">
@@ -159,6 +158,11 @@ def validate_url(url: str) -> bool:
         diff_string = "".join(diff)
         if diff_string == "":
             return False
+        # Use in the event that the test cases fail for debugging
+        # with open("content.txt", "w", encoding="utf-8") as content, open("no_content.txt", "w", encoding="utf-8") as no_content:
+        #     content.write(content_string)
+        #     no_content.write(no_content_template)
+        print(f"{diff_string}")
         return True
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
         print("Page Not Found")

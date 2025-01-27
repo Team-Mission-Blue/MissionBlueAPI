@@ -31,12 +31,13 @@ class TestCase:
         # pylint: disable=missing-function-docstring
         return self.expected_result
 
-
-class TestMissionBlueFileMethods(unittest.TestCase):
+class TestValidateUrl(unittest.TestCase):
     """
-    Run tests for the mission_blue module.
-    """
+    _summary_
 
+    Args:
+        unittest (_type_): _description_
+    """
     def test_validate_url(self):
         """
         Test case for the validate_url function.
@@ -48,6 +49,8 @@ class TestMissionBlueFileMethods(unittest.TestCase):
         - The result of validate_url(data) should match the expected_result.
         """
 
+        # If any of the test cases fail, try looking at the no_content_template variable
+        # within the validate_url function.
         cases = {
             "Post Exists": TestCase(
                 data="https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22m",
@@ -64,6 +67,14 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                 result = validate_url(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
 
+
+class TestExtractPostData(unittest.TestCase):
+    """_summary_
+
+    Args:
+        unittest (_type_): _description_
+    """
+    
     def test_extract_post_data(self):
         """
         Test case for the extract_post_data function.
@@ -119,6 +130,12 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                 result = extract_post_data(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
 
+class TestExtractPostDataFromCsv(unittest.TestCase):
+    """_summary_
+
+    Args:
+        unittest (_type_): _description_
+    """
     def test_extract_post_data_from_csv(self):
         """
         Test case for the extract_post_data_from_csv function.
@@ -164,6 +181,13 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                         result = extract_post_data_from_csv(temp.name)
                         self.assertListEqual(result, case.get_expected_result())
 
+
+class TestRemoveDuplicates(unittest.TestCase):
+    """_summary_
+
+    Args:
+        unittest (_type_): _description_
+    """
     def test_remove_duplicates(self):
         """
         Test case for the remove_duplicates function.
@@ -263,6 +287,12 @@ class TestMissionBlueFileMethods(unittest.TestCase):
                 result = remove_duplicates(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
 
+class TestSaveToCsv(unittest.TestCase):
+    """_summary_
+
+    Args:
+        unittest (_type_): _description_
+    """
     def test_save_to_csv(self):
         """
         Test case for the save_to_csv function.
