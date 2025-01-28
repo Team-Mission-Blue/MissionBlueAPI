@@ -1,0 +1,27 @@
+[project]
+name = "mission-blue"
+version = "0.1.0"
+description = "This is a Bluesky Webscraper"
+authors = [
+    {name = "Caleb Aguirre-Leon", email = "Celeon600@gmail.com"},
+    {name = "Andrew Markarian",email = "willfill@blah.com"}
+]
+license = "LICENSE"
+readme = "README.md"
+requires-python = ">=3.9,<4"
+dependencies = [
+    "requests (>=2.32.3,<3.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "black (>=24.10.0,<25.0.0)",
+    "ruff (>=0.9.3,<0.10.0)",
+    "pylint (>=3.3.3,<4.0.0)",
+    "tox (>=4.24.1,<5.0.0)",
+    "click (>=8.1.8,<9.0.0)",
+    "alive-progress (>=3.2.0,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
