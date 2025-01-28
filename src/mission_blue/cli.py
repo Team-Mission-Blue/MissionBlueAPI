@@ -149,7 +149,7 @@ def load_credentials() -> tuple[str, str]:
     sys.exit(1)
 
 
-DIRECTORY_NAME = "Scrapped Posts"
+DIRECTORY_NAME = "../../Scrapped Posts"
 
 # Generates Directory where scrapped post will reside in
 if not os.path.isdir(DIRECTORY_NAME):
