@@ -7,8 +7,9 @@
 #pylint: disable=E0401
 
 import unittest
-from unittest.mock import patch
-from auth import load_credentials
+from unittest.mock import patch, Mock
+import requests
+from auth import load_credentials, create_session
 
 class TestLoadCredentials(unittest.TestCase):
     """
@@ -42,6 +43,58 @@ class TestLoadCredentials(unittest.TestCase):
         """
         credentials = load_credentials()
         self.assertTrue(all(credentials))
+
+class TestCreateBlueSkySession(unittest.TestCase):
+    """
+    Testing the create_bluesky_session() method
+    """
+    def setUp(self):
+        self.username = "ValidUsername"
+        self.password = "ValidPassword"
+
+    @patch("auth.requests.post")
+    def test_successful_authentication(self, mock_post):
+        """"
+        Test if authentication was successful
+        """
+        mock_response = Mock()
+        mock_response.json.return_value = {"accessJwt": "mocked_jwt_token"}
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+
+        result = create_session(username = self.username, password = self.password)
+        self.assertEqual(result, "mocked_jwt_token")
+
+    @patch("auth.requests.post")
+    def test_unsuccesful_authentication(self, mock_post):
+        """
+        Test if authentication was not successful
+
+        Password or User was incorrect
+        """
+        mock_response = Mock()
+        mock_response.status_code = 401
+        mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError("401 Client Error: Unauthorized")
+        mock_post.return_value = mock_response
+
+        with self.assertRaises(SystemExit):
+            create_session(username = self.username, password = self.password)
+
+    @patch("auth.requests.post")
+    def test_invalid_request_error(self, mock_post):
+        """
+        Test if authentication was not successful
+
+        Bad Request Status Code 400
+        """
+        mock_response = Mock()
+        mock_response.status_code = 400
+        mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError("400 Client Error: Bad Request")
+        mock_post.return_value = mock_response
+
+        with self.assertRaises(SystemExit):
+            create_session(self.username, self.password)
+    
 
 
 if __name__ == "__main__":
