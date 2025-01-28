@@ -94,7 +94,6 @@ class TestCreateBlueSkySession(unittest.TestCase):
 
         with self.assertRaises(SystemExit):
             create_session(self.username, self.password)
-    
 
 
 if __name__ == "__main__":
