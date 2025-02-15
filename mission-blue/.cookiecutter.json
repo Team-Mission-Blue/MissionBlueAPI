@@ -1,0 +1,13 @@
+{
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Caleb Aguirre-Leon",
+  "copyright_year": "2025",
+  "development_status": "Development Status :: 4 - Beta",
+  "email": "celeon600@gmail.com",
+  "friendly_name": "Mission Blue",
+  "github_user": "lementknight",
+  "license": "Apache-2.0",
+  "package_name": "mission_blue",
+  "project_name": "mission-blue",
+  "version": "0.0.0"
+}

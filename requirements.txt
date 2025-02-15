@@ -9,3 +9,4 @@ tox
 click
 alive_progress
 pytest
+coverage

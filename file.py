@@ -159,6 +159,7 @@ def validate_url(url: str) -> bool:
         if diff_string == "":
             return False
         # Use in the event that the test cases fail for debugging
+        # pylint: disable=C0301
         # with open("content.txt", "w", encoding="utf-8") as content, open("no_content.txt", "w", encoding="utf-8") as no_content:
         #     content.write(content_string)
         #     no_content.write(no_content_template)

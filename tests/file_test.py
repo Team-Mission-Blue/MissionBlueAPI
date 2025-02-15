@@ -31,6 +31,7 @@ class TestCase:
         # pylint: disable=missing-function-docstring
         return self.expected_result
 
+
 class TestValidateUrl(unittest.TestCase):
     """
     _summary_
@@ -38,6 +39,7 @@ class TestValidateUrl(unittest.TestCase):
     Args:
         unittest (_type_): _description_
     """
+
     def test_validate_url(self):
         """
         Test case for the validate_url function.
@@ -74,7 +76,7 @@ class TestExtractPostData(unittest.TestCase):
     Args:
         unittest (_type_): _description_
     """
-    
+
     def test_extract_post_data(self):
         """
         Test case for the extract_post_data function.
@@ -130,12 +132,14 @@ class TestExtractPostData(unittest.TestCase):
                 result = extract_post_data(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
 
+
 class TestExtractPostDataFromCsv(unittest.TestCase):
     """_summary_
 
     Args:
         unittest (_type_): _description_
     """
+
     def test_extract_post_data_from_csv(self):
         """
         Test case for the extract_post_data_from_csv function.
@@ -188,6 +192,7 @@ class TestRemoveDuplicates(unittest.TestCase):
     Args:
         unittest (_type_): _description_
     """
+
     def test_remove_duplicates(self):
         """
         Test case for the remove_duplicates function.
@@ -287,12 +292,14 @@ class TestRemoveDuplicates(unittest.TestCase):
                 result = remove_duplicates(case.get_data())
                 self.assertEqual(result, case.get_expected_result())
 
+
 class TestSaveToCsv(unittest.TestCase):
     """_summary_
 
     Args:
         unittest (_type_): _description_
     """
+
     def test_save_to_csv(self):
         """
         Test case for the save_to_csv function.
@@ -362,7 +369,9 @@ class TestSaveToCsv(unittest.TestCase):
         for case_name, case in cases.items():
             # pylint: disable=line-too-long
             with self.subTest(case_name):
-                with tempfile.NamedTemporaryFile(mode="w+", delete_on_close=False) as temp:
+                with tempfile.NamedTemporaryFile(
+                    mode="w+", delete_on_close=False
+                ) as temp:
                     new_data, existing_data = case.get_data()
                     if temp.write(existing_data):
                         # If this line is commented, the test will fail. I believe that it is because
@@ -370,6 +379,7 @@ class TestSaveToCsv(unittest.TestCase):
                         # when the extract_post_data_from_csv function is called in the next line.
                         print(f"file: {temp.read()}")
                         save_to_csv(new_data, temp.name)
+                        temp.seek(0)
                         file_content = temp.read()
                         print(f"file_content: {file_content}")
                         self.assertEqual(file_content, case.get_expected_result())
