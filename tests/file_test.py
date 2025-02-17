@@ -326,7 +326,7 @@ class TestSaveToCsv(unittest.TestCase):
                 # pylint: disable=line-too-long
                 expected_result=""""author,content,created_at,post_link\nuserA,"postA",2023-01-01,linkA\nuserB,"postB",2023-01-02,linkB\nuserC,"postC",2023-01-03,linkC""",
             ),
-            "Write Data to existing File": TestCase(
+            "Write Data to empty File": TestCase(
                 data=([{}], ""), expected_result=""
             ),
             "File Contains Content": TestCase(

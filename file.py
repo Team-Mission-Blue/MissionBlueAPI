@@ -118,9 +118,9 @@ def validate_url(url: str) -> bool:
     }
   </style>
 
-  <script defer="defer" src="https://web-cdn.bsky.app/static/js/86.d4b20136.js"></script>
+  <script defer="defer" src="https://web-cdn.bsky.app/static/js/86.a826cdcc.js"></script>
 <link rel="stylesheet" href="https://web-cdn.bsky.app/static/css/main.183e8650.css">
-<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.219b028f.js"></script>
+<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.83f9e117.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="https://web-cdn.bsky.app/static/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="https://web-cdn.bsky.app/static/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://web-cdn.bsky.app/static/favicon-16x16.png">
