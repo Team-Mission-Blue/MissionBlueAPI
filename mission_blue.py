@@ -11,6 +11,7 @@ import pandas as pd
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
 import click
+import scraper
 
 # pylint: disable=C0301
 
@@ -274,6 +275,7 @@ def generate_query_params(
         "cursor": cursor,
         "posts_limit": posts_limit,
     }
+
 
 
 def search_posts(params, token):
@@ -543,7 +545,7 @@ def main(query="", sort="", since="", until="", mentions="", author="", lang="",
 
     # Fetch posts
     print("Fetching posts...")
-    raw_posts = search_posts(query_param, access_token)
+    raw_posts = scraper.search_posts(query_param, access_token)
 
     # Extract post data
     print("Extracting post data...")
