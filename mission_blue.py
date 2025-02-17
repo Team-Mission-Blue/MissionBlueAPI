@@ -8,6 +8,8 @@ import shutil
 from dotenv import load_dotenv
 import requests
 import pandas as pd
+from alive_progress import alive_bar
+from alive_progress.animations.bars import bar_factory
 import click
 import scraper
 
@@ -194,7 +196,9 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
     headers = {"Authorization": f"Bearer {token}"}
 
     try:
-        response = requests.get(url, headers=headers, params={"handle": handle}, timeout=10)
+        response = requests.get(
+            url, headers=headers, params={"handle": handle}, timeout=10
+        )
         response.raise_for_status()
         return response.json().get("did", handle)
     except requests.exceptions.RequestException as err:
@@ -203,9 +207,20 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
 
 
 def generate_query_params(
-    token: str, query="", sort="", since="", until="",
-    mentions="", author="", lang="", domain="", url="",
-    tags=None, limit=25, cursor="", posts_limit=500
+    token: str,
+    query="",
+    sort="",
+    since="",
+    until="",
+    mentions="",
+    author="",
+    lang="",
+    domain="",
+    url="",
+    tags=None,
+    limit=25,
+    cursor="",
+    posts_limit=500,
 ):
     # pylint: disable=R0917
     # pylint: disable=R0913
@@ -215,11 +230,11 @@ def generate_query_params(
     Args:
         token (str): The authorization token required to resolve handles.
         query (str, required): The search term for the BlueSky posts.
-        sort (str, optional): The sorting criteria for results. 
+        sort (str, optional): The sorting criteria for results.
             - Options include "top" for top posts or "latest" for the latest posts.
         since (str, optional): The start date for posts (ISO 8601 format).
         until (str, optional): The end date for posts (ISO 8601 format).
-        mentions (str, optional): Mentions to filter posts by. 
+        mentions (str, optional): Mentions to filter posts by.
             - Handles will be resolved to DIDs using the provided token.
         author (str, optional): The author of the posts (handle or DID).
             - Handles will be resolved to DIDs using the provided token.
@@ -227,7 +242,7 @@ def generate_query_params(
         domain (str, optional): A domain URL included in the posts.
         url (str, optional): A specific URL included in the posts.
         tags (list, optional): Tags to filter posts by (each tag <= 640 characters).
-        limit (int, optional): The maximum number of posts to retrieve in a single response. 
+        limit (int, optional): The maximum number of posts to retrieve in a single response.
             - Defaults to 25.
         cursor (str, optional): A pagination token to fetch a specific set of results.
             - Use the `cursor` value returned in the previous API response to navigate through paginated results.
@@ -244,7 +259,7 @@ def generate_query_params(
     if author:
         author = resolve_handle_to_did(author, token)
 
-    #print(f"Generated query parameters: {locals()}")
+    # print(f"Generated query parameters: {locals()}")
     return {
         "q": query,
         "sort": sort,
@@ -258,9 +273,91 @@ def generate_query_params(
         "tag": tags,
         "limit": limit,
         "cursor": cursor,
-        "posts_limit": posts_limit
+        "posts_limit": posts_limit,
     }
 
+
+
+def search_posts(params, token):
+    # pylint: disable=E1102
+    # pylint: disable=C0301
+
+    """
+    Search for posts using the BlueSky API.
+
+    Args:
+        params (dict): The query parameters for the API request.
+            - query (str, required): The search term for the BlueSky posts.
+            - sort (str, optional): The sorting criteria for results.
+               Options include "top" for top posts or "latest" for the latest posts.
+            - since (str, optional): The start date for posts (ISO 8601 format).
+            - until (str, optional): The end date for posts (ISO 8601 format).
+            - mentions (str, optional): Mentions to filter posts by.
+            - Handles will be resolved to DIDs using the provided token.
+            - author (str, optional): The author of the posts (handle or DID).
+            - lang (str, optional): The language of the posts.
+            - domain (str, optional): A domain URL included in the posts.
+            - url (str, optional): A specific URL included in the posts.
+            - tags (list, optional): Tags to filter posts by (each tag <= 640 characters).
+            - limit (int, optional): The maximum number of posts to retrieve in a single response.
+                Defaults to 25.
+            - cursor (str, optional): Pagination token for continuing from a previous request.
+            - posts_limit (int, optional): The maximum number of posts to retrieve across all responses.
+                Defaults to 500.
+
+    Returns:
+        list: A list of posts matching the search criteria.
+
+    Notes:
+        - Progress is displayed using a progress bar indicating the number of posts fetched.
+        - Handles pagination automatically until `posts_limit` is reached or no further results are available.
+        - Logs and returns partial results if an error occurs during fetching.
+    """
+    posts = []
+    url = f"{BASE_URL}/app.bsky.feed.searchPosts"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+
+    total_fetched = 0
+    posts_limit = params.get("posts_limit")
+    butterfly_bar = bar_factory("✨", tip="🦋", errors="🔥🧯👩‍🚒")
+
+    with alive_bar(posts_limit, bar=butterfly_bar, spinner="waves") as progress:
+        while True:
+            try:
+                response = requests.get(url, headers=headers, params=params, timeout=10)
+                # print(response)
+                response.raise_for_status()
+                data = response.json()
+
+                # Check if we have reached our overall posts limit
+                new_posts = data.get("posts", [])
+                posts.extend(new_posts)
+                total_fetched += len(new_posts)
+
+                # Update progress bar
+                progress(len(new_posts))
+
+                if posts_limit and total_fetched >= posts_limit:
+                    print(f"Fetched {total_fetched} posts, total: {total_fetched}/{posts_limit}")
+                    return posts[:posts_limit]
+
+                # Move to the enxt page if available
+                next_cursor = data.get("cursor")
+                if not next_cursor:
+                    print(f"All posts fetched. Total: {total_fetched}")
+                    return posts
+
+                params["cursor"] = next_cursor
+            except requests.exceptions.RequestException as err:
+                print(f"Error fetching posts: {err}")
+                print(
+                    "Response:",
+                    response.text if "response" in locals() else "No response",
+                )
+                return posts
 
 
 def extract_post_data(posts):
@@ -419,6 +516,7 @@ def save_to_csv(data, filename):
     '--posts_limit',
     type=click.IntRange(1, None),
     required=False,
+    default=1000,
     help=(
         'Set the total number of posts to fetch from the API across all paginated responses. This value limits the total data retrieved '
         'even if multiple API calls are required. If not specified, 1000 posts will be recieved.'
