@@ -56,7 +56,7 @@ class TestValidateUrl(unittest.TestCase):
                 data="https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22m",
                 expected_result=True,
             ),
-            # If the test case fails, look at the validate_url function logic for guidence
+            # If the test case fails, look at the validate_url function logic for guidance
             # on how to fix the test case.
             "Post Doesn't Exist": TestCase(
                 data="https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22",
