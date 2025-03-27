@@ -239,8 +239,8 @@ def remove_duplicates(data: list[dict]) -> list[dict]:
     for post in data:
         if post["post_link"] not in post_links:
             post_links.add(post["post_link"])
-            unqiue_data.append(post)
-    return unqiue_data
+            unique_data.append(post)
+    return unique_data
 
 
 def save_to_csv(data: list[dict], path_to_file: str) -> None:
