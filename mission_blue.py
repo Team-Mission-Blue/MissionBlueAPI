@@ -456,7 +456,7 @@ def main(
 
     # Save posts to CSV
     print("Saving posts to CSV...")
-    file.save_to_csv(post_data, f"Scrapped Posts/{query}.csv")
+    file.save_to_csv(post_data, f"Scraped Posts/{query}.csv")
 
 
 if __name__ == "__main__":

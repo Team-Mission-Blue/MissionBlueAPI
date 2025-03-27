@@ -164,7 +164,7 @@ cython_debug/
 
 
 # Files created by Mission Blue API
-Scrapped Posts/*
+Scraped Posts/*
 
 # VSCode Config
 .vscode
