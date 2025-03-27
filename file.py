@@ -246,14 +246,13 @@ def remove_duplicates(data: list[dict]) -> list[dict]:
 def save_to_csv(data: list[dict], path_to_file: str) -> None:
     """
     Save post data to a CSV file.
-    :param post_data: List of post data dictionaries.
+    :param data: List of post data dictionaries.
     :param filename: Output CSV filename.
     """
     if data:
         if os.path.isfile(path_to_file):
             data += extract_post_data_from_csv(path_to_file)
             data = remove_duplicates(data)
-            # os.remove(path_to_file)
         data_frame = pd.DataFrame(data)
         data_frame.to_csv(path_to_file, index=False)
         print(f"Data saved to {path_to_file}")
