@@ -235,7 +235,7 @@ def remove_duplicates(data: list[dict]) -> list[dict]:
         list(dict): List of dictionaries with duplicates removed.
     """
     post_links = set()
-    unqiue_data = []
+    unique_data = []
     for post in data:
         if post["post_link"] not in post_links:
             post_links.add(post["post_link"])
