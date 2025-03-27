@@ -10,9 +10,9 @@ import requests
 import pandas as pd
 
 
-DIRECTORY_NAME = "Scrapped Posts"
+DIRECTORY_NAME = "Scraped Posts"
 
-# Generates Directory where scrapped post will reside in
+# Generates Directory where Scraped post will reside in
 if not os.path.isdir(DIRECTORY_NAME):
     try:
         os.mkdir(DIRECTORY_NAME)
