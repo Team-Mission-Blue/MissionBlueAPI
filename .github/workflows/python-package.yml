@@ -43,7 +43,7 @@ jobs:
     - name: Run tests [Ubuntu]
       if: runner.os == 'ubuntu-latest'
       run: |
-        python3 -m unittest discover -s tests -p "*_test.py"
+        python3 -m unittest discover -s tests -p "./tests/*_test.py"
       shell: bash
     - name: Install dependencies [macOS]
       if: runner.os == 'macOS-latest'
@@ -63,7 +63,7 @@ jobs:
     - name: Run tests [macOS]
       if: runner.os == 'macOS-latest'
       run: |
-        python3 -m unittest discover -s tests -p "*_test.py"
+        python3 -m unittest discover -s tests -p "./tests/*_test.py"
       shell: bash
     - name: Install dependencies [Windows]
       if: runner.os == 'Windows'
@@ -83,5 +83,5 @@ jobs:
     - name: Run tests [Windows]
       if: runner.os == 'Windows'
       run: |
-        python3 -m unittest discover -s tests -p "*_test.py"
+        python3 -m unittest discover -s tests -p "./tests/*_test.py"
       shell: pwsh
