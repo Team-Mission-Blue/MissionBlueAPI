@@ -10,7 +10,6 @@ from alive_progress.animations.bars import bar_factory
 import click
 import file
 import auth
-import scraper
 # pylint: disable=C0301
 
 lang_dict = {
@@ -216,7 +215,6 @@ def generate_query_params(
         "cursor": cursor,
         "posts_limit": posts_limit,
     }
-
 
 
 def search_posts(params, token):
@@ -448,7 +446,7 @@ def main(
 
     # Fetch posts
     print("Fetching posts...")
-    raw_posts = scraper.search_posts(query_param, access_token)
+    raw_posts = search_posts(query_param, access_token)
 
     # Extract post data
     print("Extracting post data...")
