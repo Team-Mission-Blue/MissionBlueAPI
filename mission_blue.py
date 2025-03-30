@@ -452,8 +452,6 @@ def main(
     print("Extracting post data...")
     post_data = file.extract_post_data(raw_posts)
 
-    # print("Here is the data:", post_data)
-
     # Save posts to CSV
     print("Saving posts to CSV...")
     file.save_to_csv(post_data, f"Scraped Posts/{query}.csv")
