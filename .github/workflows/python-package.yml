@@ -4,8 +4,20 @@ name: Python package
 on:
   push:
     branches: ["main", 'stable/*']
+    paths:
+      - '**/*.py'
+      - '**/*.pyi'
+      - 'requirements.txt'
+      - 'setup.py'
+      - 'pyproject.toml'
   pull_request:
     branches: ["main", 'stable/*']
+    paths:
+      - '**/*.py'
+      - '**/*.pyi'
+      - 'requirements.txt'
+      - 'setup.py'
+      - 'pyproject.toml'
 jobs:
   build:
     runs-on: ${{ matrix.os }}
