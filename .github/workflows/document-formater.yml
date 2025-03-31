@@ -1,0 +1,20 @@
+name: Document Formater
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  yaml-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Format YAML files
+        uses: docker://ghcr.io/google/yamlfmt:latest
+        with:
+          args: .
+      - name: Check for changes
+        run: |
+          git diff --exit-code
