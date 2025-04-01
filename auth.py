@@ -1,10 +1,12 @@
 """
 Authentication module for the BlueSky API
 """
+
 import os
 import sys
 import requests
 from dotenv import load_dotenv
+
 
 # Load environment variables from the .env file
 def load_credentials() -> tuple[str, str]:
@@ -24,6 +26,7 @@ def load_credentials() -> tuple[str, str]:
         return (handle, password)
     print(".env does not exist")
     sys.exit(1)
+
 
 def create_session(username: str, password: str):
     """
