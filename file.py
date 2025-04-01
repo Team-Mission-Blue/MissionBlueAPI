@@ -164,7 +164,7 @@ def validate_url(url: str) -> bool:
         # with open("content.txt", "w", encoding="utf-8") as content, open("no_content.txt", "w", encoding="utf-8") as no_content:
         #     content.write(content_string)
         #     no_content.write(no_content_template)
-        print(f"{diff_string}")
+        # print(f"{diff_string}")
         return True
     except (requests.exceptions.HTTPError, requests.exceptions.ConnectionError):
         print("Page Not Found")

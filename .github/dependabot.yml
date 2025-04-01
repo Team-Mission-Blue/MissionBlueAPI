@@ -14,3 +14,13 @@ updates:
     python-packages:
       patterns:
         - "*"
+
+- package-ecosystem: "gomod"
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+  groups:
+    go-packages:
+      patterns:
+        - "*"
