@@ -2,8 +2,15 @@ import nox
 
 
 @nox.session
+def all(session: nox.Session) -> None:
+    """Run all sessions in sequence: format, lint, tests."""
+    session.notify("format")
+    session.notify("lint")
+    session.notify("tests")
+
+
+@nox.session
 def tests(session: nox.Session) -> None:
-    # session.install("pytest")
     session.install("-r", "requirements.txt")
     session.run(
         "coverage",
@@ -17,6 +24,7 @@ def tests(session: nox.Session) -> None:
         "*_test.py",
     )
     session.run("coverage", "report", "--fail-under=90")
+
 
 @nox.session
 def lint(session: nox.Session) -> None:

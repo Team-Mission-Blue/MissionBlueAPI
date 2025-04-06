@@ -79,7 +79,7 @@ class TestCreateBlueSkySession(unittest.TestCase):
         self.assertEqual(result, "mocked_jwt_token")
 
     @patch("auth.requests.post")
-    def test_unsuccesful_authentication(self, mock_post):
+    def test_unsuccessful_authentication(self, mock_post):
         """
         Test if authentication was not successful
 

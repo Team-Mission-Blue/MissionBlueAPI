@@ -357,9 +357,7 @@ class TestSaveToCsv(unittest.TestCase):
         for case_name, case in cases.items():
             # pylint: disable=line-too-long
             with self.subTest(case_name):
-                with tempfile.NamedTemporaryFile(
-                    mode="w+", delete_on_close=False
-                ) as temp:
+                with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp:
                     new_data, existing_data = case.get_data()
                     if temp.write(existing_data):
                         # If this line is commented, the test will fail. I believe that it is because
