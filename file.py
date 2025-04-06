@@ -120,7 +120,7 @@ def validate_url(url: str) -> bool:
 
   <script defer="defer" src="https://web-cdn.bsky.app/static/js/14.248079da.js"></script>
 <link rel="stylesheet" href="https://web-cdn.bsky.app/static/css/main.d53799a2.css">
-<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.99880175.js"></script>
+<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.d36d1165.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="https://web-cdn.bsky.app/static/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="https://web-cdn.bsky.app/static/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://web-cdn.bsky.app/static/favicon-16x16.png">
@@ -158,9 +158,9 @@ def validate_url(url: str) -> bool:
         diff_string = "".join(diff)
         if diff_string == "":
             return False
-        # Use in the event that the test cases fail for debugging
-        # Be sure to replace the no_content_template variable with the text generated from the
-        # content.txt file.
+        # # Use in the event that the test cases fail for debugging
+        # # Be sure to replace the no_content_template variable with the text generated from the
+        # # content.txt file.
         # with open("content.txt", "w", encoding="utf-8") as content, open("no_content.txt", "w", encoding="utf-8") as no_content:
         #     content.write(content_string)
         #     no_content.write(no_content_template)
