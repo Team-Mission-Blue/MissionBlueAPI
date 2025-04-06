@@ -5,7 +5,7 @@ import nox
 def tests(session: nox.Session) -> None:
     """Run the test suite with coverage."""
     session.install("-r", "requirements.txt")
-    session.install("coverage[toml]")
+    # session.install("coverage[toml]")
 
     # Run tests with coverage
     session.run(
