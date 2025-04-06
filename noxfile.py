@@ -6,7 +6,8 @@ def tests(session: nox.Session) -> None:
     # session.install("pytest")
     session.install("-r", "requirements.txt")
     session.run(
-        "python",
+        "coverage",
+        "run",
         "-m",
         "unittest",
         "discover",
@@ -15,7 +16,7 @@ def tests(session: nox.Session) -> None:
         "-p",
         "*_test.py",
     )
-
+    session.run("coverage", "report", "--fail-under=90")
 
 @nox.session
 def lint(session: nox.Session) -> None:
