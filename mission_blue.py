@@ -1,15 +1,13 @@
-"""
-This module conatins the BlueSky Web Scrapper
-"""
+"""This module conatins the BlueSky Web Scrapper."""
 
-import os
-import shutil
+import click
 import requests
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
-import click
-import file
+
 import auth
+import file
+
 # pylint: disable=C0301
 
 lang_dict = {
@@ -128,10 +126,7 @@ lang_dict = {
 
 
 def resolve_handle_to_did(handle: str, token: str) -> str:
-    """
-    Resolve a Bluesky handle to DID
-    """
-
+    """Resolve a Bluesky handle to DID."""
     url = "https://bsky.social/xrpc/com.atproto.identity.resolveHandle"
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -193,6 +188,7 @@ def generate_query_params(
 
     Returns:
         dict: A dictionary containing the query parameters for the API request.
+
     """
     if mentions:
         mentions = resolve_handle_to_did(mentions, token)
@@ -220,9 +216,7 @@ def generate_query_params(
 def search_posts(params, token):
     # pylint: disable=E1102
     # pylint: disable=C0301
-
-    """
-    Search for posts using the BlueSky API.
+    """Search for posts using the BlueSky API.
 
     Args:
         params (dict): The query parameters for the API request.
@@ -251,6 +245,7 @@ def search_posts(params, token):
         - Progress is displayed using a progress bar indicating the number of posts fetched.
         - Handles pagination automatically until `posts_limit` is reached or no further results are available.
         - Logs and returns partial results if an error occurs during fetching.
+
     """
     posts = []
     url = "https://bsky.social/xrpc/app.bsky.feed.searchPosts"
@@ -413,9 +408,7 @@ def main(
     limit=25,
     posts_limit=1000,
 ):
-    """
-    method that tests if each click param flag is being passed in correctly
-    """
+    """Method that tests if each click param flag is being passed in correctly."""
     # pylint: disable=R0913
     # pylint: disable=R0914
     # pylint: disable=R0917
