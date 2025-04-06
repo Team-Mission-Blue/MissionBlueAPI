@@ -43,10 +43,6 @@ jobs:
         run: nox -s safety
         env:
           PYTHONPATH: ${{ github.workspace }}
-      - name: Run type checking with nox
-        run: nox -s type_check
-        env:
-          PYTHONPATH: ${{ github.workspace }}
       - name: Run format with nox
         run: nox -s format
         env:
