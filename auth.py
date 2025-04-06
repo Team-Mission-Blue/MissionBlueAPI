@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 
 # Load environment variables from the .env file
-def load_credentials() -> tuple[str, str]:
+def load_credentials() -> tuple[str, str] | None:
     """Validates and returns user BlueSky credentials.
 
     Returns:
