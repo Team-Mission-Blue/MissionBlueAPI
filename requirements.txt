@@ -10,3 +10,4 @@ click
 alive_progress
 pytest
 coverage
+nox

@@ -2,14 +2,13 @@
 This module conatins the BlueSky Web Scrapper
 """
 
-import os
-import shutil
 import requests
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
 import click
 import file
 import auth
+
 # pylint: disable=C0301
 
 lang_dict = {
