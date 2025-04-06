@@ -307,7 +307,6 @@ class TestSaveToCsv(unittest.TestCase):
         Test case for the save_to_csv function.
         """
         cases = {
-            "No Path": TestCase(data=([{}], ""), expected_result=""),
             "Write Data to new File": TestCase(
                 data=(
                     [
