@@ -1,27 +1,23 @@
-"""
-Testing suite for the mission_blue module.
-"""
+"""Testing suite for the mission_blue module."""
 
 # pylint: disable=W0613
 # pylint: disable=C0301
 # pylint: disable=E0401
 
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 import requests
-from auth import load_credentials, create_session
+
+from auth import create_session, load_credentials
 
 
 class TestLoadCredentials(unittest.TestCase):
-    """
-    Testing the load_credentials method
-    """
+    """Testing the load_credentials method."""
 
     @patch("auth.load_dotenv", return_value=False)
     def test_no_env(self, mock_load_dotenv):
-        """
-        Test if .env file does not exist
-        """
+        """Test if .env file does not exist."""
         with self.assertRaises(SystemExit) as cm:
             load_credentials()
         self.assertEqual(cm.exception.code, 1)
@@ -34,9 +30,7 @@ class TestLoadCredentials(unittest.TestCase):
     )
     @patch("auth.load_dotenv", return_value=True)
     def test_env_with_no_credentials(self, mock_load_dotenv, mock_getenv):
-        """
-        Test if .env exist but username and password are empty
-        """
+        """Test if .env exist but username and password are empty."""
         with self.assertRaises(AssertionError) as cm:
             load_credentials()
         self.assertIn("can not be empty", str(cm.exception))
@@ -49,17 +43,13 @@ class TestLoadCredentials(unittest.TestCase):
         ),
     )
     def test_env_exist_with_valid_credentials(self, mock_load_dotenv, mock_getenv):
-        """
-        Test if .env exists with valid username and password
-        """
+        """Test if .env exists with valid username and password."""
         credentials = load_credentials()
         self.assertTrue(all(credentials))
 
 
 class TestCreateBlueSkySession(unittest.TestCase):
-    """
-    Testing the create_bluesky_session() method
-    """
+    """Testing the create_bluesky_session() method."""
 
     def setUp(self):
         self.username = "ValidUsername"
@@ -68,7 +58,7 @@ class TestCreateBlueSkySession(unittest.TestCase):
     @patch("auth.requests.post")
     def test_successful_authentication(self, mock_post):
         """ "
-        Test if authentication was successful
+        Test if authentication was successful.
         """
         mock_response = Mock()
         mock_response.json.return_value = {"accessJwt": "mocked_jwt_token"}
@@ -80,8 +70,7 @@ class TestCreateBlueSkySession(unittest.TestCase):
 
     @patch("auth.requests.post")
     def test_unsuccessful_authentication(self, mock_post):
-        """
-        Test if authentication was not successful
+        """Test if authentication was not successful.
 
         Password or User was incorrect
         """
@@ -97,8 +86,7 @@ class TestCreateBlueSkySession(unittest.TestCase):
 
     @patch("auth.requests.post")
     def test_invalid_request_error(self, mock_post):
-        """
-        Test if authentication was not successful
+        """Test if authentication was not successful.
 
         Bad Request Status Code 400
         """

@@ -171,3 +171,6 @@ Scraped Posts/*
 
 # Mac OS Metadata
 .DS_Store
+
+# Safety Project
+.safety-project.ini

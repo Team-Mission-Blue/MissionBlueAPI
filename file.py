@@ -1,14 +1,12 @@
-"""
-Mission Blue Module that holds file handling functions for saving and loading data
-"""
+"""Mission Blue Module that holds file handling functions for saving and loading data."""
 
 import csv
 import os
 import sys
 from difflib import unified_diff
-import requests
-import pandas as pd
 
+import pandas as pd
+import requests
 
 DIRECTORY_NAME = "Scraped Posts"
 
@@ -24,12 +22,14 @@ if not os.path.isdir(DIRECTORY_NAME):
 
 
 def validate_url(url: str) -> bool:
-    """
-    Validate URL to ensure it is a valid URL.
+    """Validate URL to ensure it is a valid URL.
+
     Args:
         url (str): URL to validate.
+
     Returns:
         bool: True if URL is valid, False otherwise.
+
     """
     no_content_template = """<!DOCTYPE html>
 <html>
@@ -172,8 +172,7 @@ def validate_url(url: str) -> bool:
 
 
 def extract_post_data(posts: list[dict]) -> list[dict]:
-    """
-    Extract relevant data from posts and filter by date range.
+    """Extract relevant data from posts and filter by date range.
 
     :param posts: List of raw posts.
     :param START_DATE: Start date for filtering (YYYY-MM-DD).
@@ -209,8 +208,7 @@ def extract_post_data(posts: list[dict]) -> list[dict]:
 
 
 def extract_post_data_from_csv(path: str) -> list[dict]:
-    """
-    Extract data from existing csv file.
+    """Extract data from existing csv file.
     :param path: Path to file.
     :return: List of dictionaries containing post data from file.
     """
@@ -219,7 +217,7 @@ def extract_post_data_from_csv(path: str) -> list[dict]:
         print(f"File {path} not found.")
         return post_from_csv
 
-    with open(path, mode="r", encoding="utf-8") as file:
+    with open(path, encoding="utf-8") as file:
         csv_file = csv.DictReader(file)
         for lines in csv_file:
             post_from_csv.append(lines)
@@ -227,12 +225,14 @@ def extract_post_data_from_csv(path: str) -> list[dict]:
 
 
 def remove_duplicates(data: list[dict]) -> list[dict]:
-    """
-    This function removes duplicate entries from a list of dictionaries using the post_link key.
+    """This function removes duplicate entries from a list of dictionaries using the post_link key.
+
     Args:
         data list(dict): List of dictionaries with some duplicate entries.
+
     Returns:
         list(dict): List of dictionaries with duplicates removed.
+
     """
     post_links = set()
     unique_data = []
@@ -244,8 +244,7 @@ def remove_duplicates(data: list[dict]) -> list[dict]:
 
 
 def save_to_csv(data: list[dict], path_to_file: str) -> None:
-    """
-    Save post data to a CSV file.
+    """Save post data to a CSV file.
     :param data: List of post data dictionaries.
     :param filename: Output CSV filename.
     """

@@ -1,20 +1,19 @@
-"""
-Authentication module for the BlueSky API
-"""
+"""Authentication module for the BlueSky API."""
 
 import os
 import sys
+
 import requests
 from dotenv import load_dotenv
 
 
 # Load environment variables from the .env file
 def load_credentials() -> tuple[str, str]:
-    """
-    Validates and returns user BlueSky credentials
+    """Validates and returns user BlueSky credentials.
 
     Returns:
-        tuple[str, str]: This ordered pair contains the Bluesky Username and Password
+        tuple[str, str] | None: This ordered pair contains the Bluesky Username and Password or None if the .env file does not exist.
+
     """
     # pylint: disable=C0301
     if load_dotenv():
@@ -29,8 +28,7 @@ def load_credentials() -> tuple[str, str]:
 
 
 def create_session(username: str, password: str):
-    """
-    Authenticate and create a session to get the access token.
+    """Authenticate and create a session to get the access token.
 
     :return: Access token (accessJwt) for authentication.
     """

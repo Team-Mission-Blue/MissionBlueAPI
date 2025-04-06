@@ -1,13 +1,25 @@
-requests
-pandas
-python-dotenv
-black
-openpyxl
-ruff
-pylint
-tox
-click
-alive_progress
-pytest
-coverage
-nox
+# Core dependencies
+requests>=2.31.0
+pandas>=2.2.0
+python-dotenv>=1.0.0
+openpyxl>=3.1.2
+click>=8.1.7
+alive_progress>=3.1.5
+
+# Testing
+pytest>=8.0.0
+coverage[toml]>=7.4.0
+mypy>=1.8.0
+
+# Code quality
+black>=24.1.1
+ruff>=0.2.1
+pylint>=3.0.3
+
+# Development tools
+nox>=2024.3.2
+tox>=4.15.0
+
+# pandas-stubs
+# types-requests
+safety
