@@ -1,6 +1,10 @@
 # MissionBlueAPI
 
-This is a Bluesky Web Scraper
+**MissionBlueAPI** is a Python tool that fetches data from the [BlueSky](https://bsky.app/) Social platform using the [BlueSky Atproto API](https://github.com/bluesky-social/atproto), and saves the results into CSV files for futher anlysis or archival.
+
+> ⚠️ **This Project is still under development and is not yet available as a Python Package**
+
+## Usage
 
 Before you can use the BlueSky Webscraper you need to register an account with [Bluesky](https://bsky.app/). Once you create your account you need to create a .env where you have 2 fields BLUESKY_HANDLE and BLUESKY_APP_PASSWORD. Your .env file look like this:
 
