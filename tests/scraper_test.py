@@ -62,7 +62,5 @@ class TestSearchPosts(unittest.TestCase):
                 self.assertEqual(result, case.get_expected_result())
 
 
-
-
 if __name__ == "__main__":
     unittest.main()

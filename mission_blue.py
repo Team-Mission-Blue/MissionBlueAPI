@@ -2,8 +2,6 @@
 
 import click
 import requests
-from alive_progress import alive_bar
-from alive_progress.animations.bars import bar_factory
 
 import auth
 import scraper
