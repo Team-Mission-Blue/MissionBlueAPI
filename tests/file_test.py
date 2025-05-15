@@ -18,7 +18,7 @@ class TestCase:
 
     def __init__(self, data: typing.Any, expected_result: typing.Any) -> None:
         self.data = data
-        self.expected_result= expected_result
+        self.expected_result = expected_result
 
     def get_data(self) -> typing.Any:
         # pylint: disable=missing-function-docstring

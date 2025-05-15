@@ -118,9 +118,9 @@ def validate_url(url: str) -> bool:
     }
   </style>
 
-  <script defer="defer" src="https://web-cdn.bsky.app/static/js/14.248079da.js"></script>
-<link rel="stylesheet" href="https://web-cdn.bsky.app/static/css/main.d53799a2.css">
-<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.d36d1165.js"></script>
+  <script defer="defer" src="https://web-cdn.bsky.app/static/js/95.12abc9a3.js"></script>
+<link rel="stylesheet" href="https://web-cdn.bsky.app/static/css/main.ffafef6e.css">
+<script defer="defer" src="https://web-cdn.bsky.app/static/js/main.c474f08c.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="https://web-cdn.bsky.app/static/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="https://web-cdn.bsky.app/static/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://web-cdn.bsky.app/static/favicon-16x16.png">
@@ -212,7 +212,7 @@ def extract_post_data_from_csv(path: str) -> list[dict]:
     :param path: Path to file.
     :return: List of dictionaries containing post data from file.
     """
-    post_from_csv: list[dict]= []
+    post_from_csv: list[dict] = []
     if not os.path.isfile(path):
         print(f"File {path} not found.")
         return post_from_csv

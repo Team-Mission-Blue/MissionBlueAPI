@@ -4,7 +4,7 @@ import click
 import requests
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
-
+from typing import Optional, List, Dict, Any
 import auth
 import file
 
@@ -140,8 +140,6 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
         print(f"Error resolving handle: {err}")
         return handle
 
-
-from typing import Optional, List, Dict, Any
 
 def generate_query_params(
     token: str,
