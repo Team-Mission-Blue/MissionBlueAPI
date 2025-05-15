@@ -2,17 +2,18 @@
 
 import os
 import sys
+import typing
 
 import requests
 from dotenv import load_dotenv
 
 
 # Load environment variables from the .env file
-def load_credentials() -> tuple[str, str] | None:
+def load_credentials() -> tuple[str | None, str | None]:
     """Validates and returns user BlueSky credentials.
 
     Returns:
-        tuple[str, str] | None: This ordered pair contains the Bluesky Username and Password or None if the .env file does not exist.
+        tuple[str | None, str | None]: This ordered pair contains the Bluesky Username and Password or None if the .env file does not exist.
 
     """
     # pylint: disable=C0301
@@ -27,7 +28,7 @@ def load_credentials() -> tuple[str, str] | None:
     sys.exit(1)
 
 
-def create_session(username: str, password: str):
+def create_session(username: str, password: str) -> typing.Any:
     """Authenticate and create a session to get the access token.
 
     :return: Access token (accessJwt) for authentication.
@@ -39,6 +40,7 @@ def create_session(username: str, password: str):
         response = requests.post(url, json=payload, timeout=10)
         response.raise_for_status()
         session = response.json()
+        print(session)
         return session["accessJwt"]
     except requests.exceptions.RequestException as err:
         print("Error during authentication:", err)

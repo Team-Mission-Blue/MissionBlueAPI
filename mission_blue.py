@@ -135,28 +135,30 @@ def resolve_handle_to_did(handle: str, token: str) -> str:
             url, headers=headers, params={"handle": handle}, timeout=10
         )
         response.raise_for_status()
-        return response.json().get("did", handle)
+        return str(response.json().get("did", handle))
     except requests.exceptions.RequestException as err:
         print(f"Error resolving handle: {err}")
         return handle
 
 
+from typing import Optional, List, Dict, Any
+
 def generate_query_params(
     token: str,
-    query="",
-    sort="",
-    since="",
-    until="",
-    mentions="",
-    author="",
-    lang="",
-    domain="",
-    url="",
-    tags=None,
-    limit=25,
-    cursor="",
-    posts_limit=500,
-):
+    query: str = "",
+    sort: str = "",
+    since: str = "",
+    until: str = "",
+    mentions: str = "",
+    author: str = "",
+    lang: str = "",
+    domain: str = "",
+    url: str = "",
+    tags: Optional[List[str]] = None,
+    limit: int = 25,
+    cursor: str = "",
+    posts_limit: int = 500,
+) -> Dict[str, Any]:
     # pylint: disable=R0917
     # pylint: disable=R0913
     # pylint: disable=C0301
@@ -213,7 +215,7 @@ def generate_query_params(
     }
 
 
-def search_posts(params, token):
+def search_posts(params: dict, token: str) -> list[dict]:
     # pylint: disable=E1102
     # pylint: disable=C0301
     """Search for posts using the BlueSky API.
@@ -395,25 +397,28 @@ def search_posts(params, token):
     ),
 )
 def main(
-    query="",
-    sort="",
-    since="",
-    until="",
-    mentions="",
-    author="",
-    lang="",
-    domain="",
-    url="",
-    tags=tuple(),
-    limit=25,
-    posts_limit=1000,
-):
+    query: str = "",
+    sort: str = "",
+    since: str = "",
+    until: str = "",
+    mentions: str = "",
+    author: str = "",
+    lang: str = "",
+    domain: str = "",
+    url: str = "",
+    tags: tuple = (),
+    limit: int = 25,
+    posts_limit: int = 1000,
+) -> None:
     """Method that tests if each click param flag is being passed in correctly."""
     # pylint: disable=R0913
     # pylint: disable=R0914
     # pylint: disable=R0917
     print("Loading Credentials...")
     bluesky_handle, bluesky_app_password = auth.load_credentials()
+
+    if bluesky_handle is None or bluesky_app_password is None:
+        raise ValueError("Bluesky handle and app password must not be None.")
 
     # Authenticate and create a session
     print("Authenticating...")
@@ -431,7 +436,7 @@ def main(
         lang,
         domain,
         url,
-        tags,
+        list(tags) if tags else None,
         limit,
         posts_limit=posts_limit,
         cursor="",

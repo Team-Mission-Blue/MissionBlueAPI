@@ -212,7 +212,7 @@ def extract_post_data_from_csv(path: str) -> list[dict]:
     :param path: Path to file.
     :return: List of dictionaries containing post data from file.
     """
-    post_from_csv = []
+    post_from_csv: list[dict]= []
     if not os.path.isfile(path):
         print(f"File {path} not found.")
         return post_from_csv
