@@ -28,7 +28,7 @@ def load_credentials() -> tuple[str | None, str | None]:
     sys.exit(1)
 
 
-def create_session(username: str, password: str) -> typing.Any:
+def create_session(username: str, password: str) -> str:
     """Authenticate and create a session to get the access token.
 
     :return: Access token (accessJwt) for authentication.
