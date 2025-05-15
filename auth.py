@@ -40,7 +40,6 @@ def create_session(username: str, password: str) -> str:
         response = requests.post(url, json=payload, timeout=10)
         response.raise_for_status()
         session = response.json()
-        print(session)
         return session["accessJwt"]
     except requests.exceptions.RequestException as err:
         print("Error during authentication:", err)
