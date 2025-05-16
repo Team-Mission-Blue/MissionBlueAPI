@@ -2,7 +2,6 @@
 
 import os
 import sys
-import typing
 
 import requests
 from dotenv import load_dotenv

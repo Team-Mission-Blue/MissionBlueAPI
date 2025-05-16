@@ -16,7 +16,8 @@ from auth import create_session, load_credentials
 class TestLoadCredentials(unittest.TestCase):
     """Testing the load_credentials method."""
 
-    def test_no_env(self, mock_load_dotenv: mock.MagicMock) -> None:
+    @patch("auth.load_dotenv", return_value=False)
+    def test_no_env(self, mock_load_dotenv) -> None:
         """Test if .env file does not exist."""
         with self.assertRaises(SystemExit) as cm:
             load_credentials()
