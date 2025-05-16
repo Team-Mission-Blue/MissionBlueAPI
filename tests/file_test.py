@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+import typing
 
 from file import (
     extract_post_data,
@@ -15,15 +16,15 @@ from file import (
 class TestCase:
     """Class used to store test data and expected results for the TestMissionBlue function."""
 
-    def __init__(self, data, expected_result):
+    def __init__(self, data: typing.Any, expected_result: typing.Any) -> None:
         self.data = data
         self.expected_result = expected_result
 
-    def get_data(self):
+    def get_data(self) -> typing.Any:
         # pylint: disable=missing-function-docstring
         return self.data
 
-    def get_expected_result(self):
+    def get_expected_result(self) -> typing.Any:
         # pylint: disable=missing-function-docstring
         return self.expected_result
 
@@ -36,7 +37,7 @@ class TestValidateUrl(unittest.TestCase):
 
     """
 
-    def test_validate_url(self):
+    def test_validate_url(self) -> None:
         """Test case for the validate_url function.
         This test verifies that the given url contains the correct post data.
         Test data:
@@ -74,7 +75,7 @@ class TestExtractPostData(unittest.TestCase):
 
     """
 
-    def test_extract_post_data(self):
+    def test_extract_post_data(self) -> None:
         """Test case for the extract_post_data function.
         This test verifies that the remove_duplicates function correctly removes
         duplicate entries from a list of dictionaries. Each dictionary represents
@@ -136,7 +137,7 @@ class TestExtractPostDataFromCsv(unittest.TestCase):
 
     """
 
-    def test_extract_post_data_from_csv(self):
+    def test_extract_post_data_from_csv(self) -> None:
         """Test case for the extract_post_data_from_csv function."""
         cases = {
             "No Path": TestCase(data="", expected_result=[]),
@@ -189,7 +190,7 @@ class TestRemoveDuplicates(unittest.TestCase):
 
     """
 
-    def test_remove_duplicates(self):
+    def test_remove_duplicates(self) -> None:
         """Test case for the remove_duplicates function.
         This test verifies that the remove_duplicates function correctly removes
         duplicate entries from a list of dictionaries. Each dictionary represents
@@ -295,7 +296,7 @@ class TestSaveToCsv(unittest.TestCase):
 
     """
 
-    def test_save_to_csv(self):
+    def test_save_to_csv(self) -> None:
         """Test case for the save_to_csv function."""
         cases = {
             "Write Data to new File": TestCase(
