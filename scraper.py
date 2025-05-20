@@ -55,7 +55,6 @@ def search_posts(params, token):
         while True:
             try:
                 response = requests.get(url, headers=headers, params=params, timeout=10)
-                # print(response)
                 response.raise_for_status()
                 data = response.json()
 
@@ -68,7 +67,9 @@ def search_posts(params, token):
                 progress(len(new_posts))
 
                 if posts_limit and total_fetched >= posts_limit:
-                    print(f"Fetched {total_fetched} posts, total: {total_fetched}/{posts_limit}")
+                    print(
+                        f"Fetched {total_fetched} posts, total: {total_fetched}/{posts_limit}"
+                    )
                     return posts[:posts_limit]
 
                 #Move to the enxt page if available
