@@ -5,6 +5,7 @@ import requests
 import auth
 import scraper
 import file
+from typing import Optional, List, Dict, Any
 # pylint: disable=C0301
 
 lang_dict = {

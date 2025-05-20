@@ -3,6 +3,7 @@ This module contains a function to search for posts using the BlueSky API.
 """
 import requests
 from alive_progress import alive_bar
+from alive_progress.animations.bars import bar_factory
 
 def search_posts(params, token):
     # pylint: disable=E1102
@@ -48,8 +49,9 @@ def search_posts(params, token):
 
     total_fetched = 0
     posts_limit = params.get("posts_limit", 1000)
+    butterfly_bar = bar_factory("✨", tip="🦋", errors="🔥🧯👩‍🚒")
 
-    with alive_bar(posts_limit) as progress:
+    with alive_bar(posts_limit, bar=butterfly_bar, spinner="waves") as progress:
         while True:
             try:
                 response = requests.get(url, headers=headers, params=params, timeout=10)
