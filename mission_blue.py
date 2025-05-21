@@ -6,6 +6,7 @@ import auth
 import scraper
 import file
 from typing import Optional, List, Dict, Any
+
 # pylint: disable=C0301
 
 lang_dict = {
@@ -209,6 +210,7 @@ def generate_query_params(
         "cursor": cursor,
         "posts_limit": posts_limit,
     }
+
 
 # Begin Click CLI
 

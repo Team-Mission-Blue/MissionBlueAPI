@@ -1,9 +1,11 @@
 """
 This module contains a function to search for posts using the BlueSky API.
 """
+
 import requests
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
+
 
 def search_posts(params, token):
     # pylint: disable=E1102
@@ -15,22 +17,22 @@ def search_posts(params, token):
     Args:
         params (dict): The query parameters for the API request.
             - query (str, required): The search term for the BlueSky posts.
-            - sort (str, optional): The sorting criteria for results. 
+            - sort (str, optional): The sorting criteria for results.
                Options include "top" for top posts or "latest" for the latest posts.
             - since (str, optional): The start date for posts (ISO 8601 format).
             - until (str, optional): The end date for posts (ISO 8601 format).
-            - mentions (str, optional): Mentions to filter posts by. 
+            - mentions (str, optional): Mentions to filter posts by.
             - Handles will be resolved to DIDs using the provided token.
             - author (str, optional): The author of the posts (handle or DID).
             - lang (str, optional): The language of the posts.
             - domain (str, optional): A domain URL included in the posts.
             - url (str, optional): A specific URL included in the posts.
             - tags (list, optional): Tags to filter posts by (each tag <= 640 characters).
-            - limit (int, optional): The maximum number of posts to retrieve in a single response. 
+            - limit (int, optional): The maximum number of posts to retrieve in a single response.
                 Defaults to 25.
             - cursor (str, optional): Pagination token for continuing from a previous request.
             - posts_limit (int, optional): The maximum number of posts to retrieve across all responses.
-                Defaults to 500. 
+                Defaults to 500.
 
     Returns:
         list: A list of posts matching the search criteria.
@@ -58,12 +60,12 @@ def search_posts(params, token):
                 response.raise_for_status()
                 data = response.json()
 
-                #Check if we have reached our overall posts limit
+                # Check if we have reached our overall posts limit
                 new_posts = data.get("posts", [])
                 posts.extend(new_posts)
                 total_fetched += len(new_posts)
 
-                #Update progress bar
+                # Update progress bar
                 progress(len(new_posts))
 
                 if posts_limit and total_fetched >= posts_limit:
@@ -72,7 +74,7 @@ def search_posts(params, token):
                     )
                     return posts[:posts_limit]
 
-                #Move to the enxt page if available
+                # Move to the enxt page if available
                 next_cursor = data.get("cursor")
                 if not next_cursor:
                     print(f"All posts fetched. Total: {total_fetched}")
@@ -82,6 +84,7 @@ def search_posts(params, token):
             except requests.exceptions.RequestException as err:
                 print(f"Error fetching posts: {err}")
                 print(
-                    "Response:", response.text if "response" in locals() else "No response"
+                    "Response:",
+                    response.text if "response" in locals() else "No response",
                 )
                 return posts

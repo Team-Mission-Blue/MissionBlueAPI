@@ -1,11 +1,8 @@
 """Testing suite for the mission_blue module."""
 
 import unittest
-from unittest.mock import Mock, patch
-
-from scraper import (
-    search_posts,
-)
+from scraper import search_posts
+from file import validate_url
 
 
 class TestCase:
