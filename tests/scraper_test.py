@@ -1,25 +1,8 @@
 """Testing suite for the mission_blue module."""
 
 import unittest
+from unittest.mock import patch, Mock, MagicMock
 from scraper import search_posts
-from file import validate_url
-
-
-class TestCase:
-    """Class used to store test data and expected results for the TestMissionBlue function."""
-
-    def __init__(self, data, expected_result):
-        self.data = data
-        self.expected_result = expected_result
-
-    def get_data(self):
-        # pylint: disable=missing-function-docstring
-        return self.data
-
-    def get_expected_result(self):
-        # pylint: disable=missing-function-docstring
-        return self.expected_result
-
 
 class TestSearchPosts(unittest.TestCase):
     """_summary_.
@@ -28,35 +11,41 @@ class TestSearchPosts(unittest.TestCase):
         unittest (_type_): _description_
 
     """
+    # Dummy API data for testing
+    
+    @patch("scraper.requests.get")
+    def test_no_query(self, mock_get: MagicMock) -> None:
+        """Test if the function raises ValueError when a query is not provided."""
+        params = {}
+        token = "valid_token"
 
-    def test_search_posts(self):
-        """Test case for the validate_url function.
-        This test verifies that the given url contains the correct post data.
-        Test data:
-        - Post Links with valid and invalid post urls.
-        - An expected result boolean.
-        Assertions:
-        - The result of validate_url(data) should match the expected_result.
-        """
-        # If any of the test cases fail, try looking at the no_content_template variable
-        # within the validate_url function.
-        cases = {
-            "Post Exists": TestCase(
-                data="https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22m",
-                expected_result=True,
-            ),
-            # If the test case fails, look at the validate_url function logic for guidance
-            # on how to fix the test case.
-            "Post Doesn't Exist": TestCase(
-                data="https://bsky.app/profile/witheringtales.bsky.social/post/3legkyuzjs22",
-                expected_result=False,
-            ),
-        }
+        with self.assertRaises(ValueError) as cm:
+            search_posts(params, token)
+        
+        mock_get.assert_not_called()
+        self.assertIn("query", str(cm.exception).lower())
 
-        for case_name, case in cases.items():
-            with self.subTest(case_name):
-                result = validate_url(case.get_data())
-                self.assertEqual(result, case.get_expected_result())
+    @patch("scraper.requests.get")
+    def test_no_token(self, mock_get: MagicMock) -> None:
+        """Test if the function raises ValueError when a token it not provided."""
+        params = {"query": "test"}
+        token = None
+
+        with self.assertRaises(ValueError) as cm:
+            search_posts(params, token)
+        
+        mock_get.assert_not_called()
+        self.assertIn("token", str(cm.exception).lower())
+
+    # Ensure that the function returns an empty list when no posts are found
+
+    # Ensure that the function returns a list of posts when valid parameters are provided
+
+    # Ensure that the function handles pagination correctly and returns all posts
+
+    # Simulate a failed API response (e.g., 400: [InvalidRequest, ExpiredToken, InvalidToken, BadQueryString])
+    
+    # Simulate a failed API response (401)
 
 
 if __name__ == "__main__":

@@ -42,6 +42,12 @@ def search_posts(params, token):
         - Handles pagination automatically until `posts_limit` is reached or no further results are available.
         - Logs and returns partial results if an error occurs during fetching.
     """
+    # Validate input parameters
+    if "query" not in params:
+        raise ValueError("Query parameter is required.")
+    if not token:
+        raise ValueError("Token is required.")
+
     posts = []
     url = "https://bsky.social/xrpc/app.bsky.feed.searchPosts"
     headers = {
