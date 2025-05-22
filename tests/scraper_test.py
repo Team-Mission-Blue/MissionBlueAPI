@@ -1,18 +1,13 @@
 """Testing suite for the mission_blue module."""
 
 import unittest
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch, MagicMock
 from scraper import search_posts
 
+
 class TestSearchPosts(unittest.TestCase):
-    """_summary_.
+    """Testing the search_posts() method."""
 
-    Args:
-        unittest (_type_): _description_
-
-    """
-    # Dummy API data for testing
-    
     @patch("scraper.requests.get")
     def test_no_query(self, mock_get: MagicMock) -> None:
         """Test if the function raises ValueError when a query is not provided."""
@@ -21,30 +16,67 @@ class TestSearchPosts(unittest.TestCase):
 
         with self.assertRaises(ValueError) as cm:
             search_posts(params, token)
-        
+
         mock_get.assert_not_called()
         self.assertIn("query", str(cm.exception).lower())
 
     @patch("scraper.requests.get")
     def test_no_token(self, mock_get: MagicMock) -> None:
         """Test if the function raises ValueError when a token it not provided."""
-        params = {"query": "test"}
+        params = {"q": "test"}
         token = None
 
         with self.assertRaises(ValueError) as cm:
             search_posts(params, token)
-        
+
         mock_get.assert_not_called()
         self.assertIn("token", str(cm.exception).lower())
 
     # Ensure that the function returns an empty list when no posts are found
 
-    # Ensure that the function returns a list of posts when valid parameters are provided
+    @patch("scraper.requests.get")
+    def test_valid_response(self, mock_get: MagicMock) -> None:
+        """Test that the function returns a list of posts when valid parameters are provided."""
+        params = {"q": "test"}
+        token = "valid_token"
 
-    # Ensure that the function handles pagination correctly and returns all posts
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "posts": [
+                {
+                    "uri": "at://did:plc:12345/app.bsky.feed.post/abcdef",
+                    "cid": "bafyre123...",
+                    "author": {
+                        "did": "did:plc:12345",
+                        "handle": "author_handle",
+                        "displayName": "Author Name",
+                    },
+                    "record": {
+                        "text": "Post content",
+                        "createdAt": "2023-10-01T00:00:00Z",
+                        "$type": "app.bsky.feed.post",
+                    },
+                    "indexedAt": "2023-10-01T00:00:01Z",
+                }
+            ],
+            "cursor": None,
+        }
+
+        mock_get.return_value = mock_response
+
+        result = search_posts(params, token)
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["record"]["text"], "Post content")
+        self.assertEqual(result[0]["author"]["handle"], "author_handle")
+        self.assertEqual(result[0]["record"]["createdAt"], "2023-10-01T00:00:00Z")
+        self.assertEqual(
+            result[0]["uri"], "at://did:plc:12345/app.bsky.feed.post/abcdef"
+        )
 
     # Simulate a failed API response (e.g., 400: [InvalidRequest, ExpiredToken, InvalidToken, BadQueryString])
-    
+
     # Simulate a failed API response (401)
 
 
