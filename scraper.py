@@ -3,7 +3,6 @@ This module contains a function to search for posts using the BlueSky API.
 """
 
 import requests
-import pprint
 from alive_progress import alive_bar
 from alive_progress.animations.bars import bar_factory
 
@@ -79,7 +78,6 @@ def search_posts(params, token):
                     print(
                         f"Fetched {total_fetched} posts, total: {total_fetched}/{posts_limit}"
                     )
-                    pprint.pprint(posts[0])
                     return posts[:posts_limit]
 
                 # Move to the enxt page if available

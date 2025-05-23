@@ -1,6 +1,9 @@
 """Testing suite for the mission_blue module."""
 
 import unittest
+import requests
+import io
+import sys
 from unittest.mock import patch, MagicMock
 from scraper import search_posts
 
@@ -76,8 +79,28 @@ class TestSearchPosts(unittest.TestCase):
         )
 
     # Simulate a failed API response (e.g., 400: [InvalidRequest, ExpiredToken, InvalidToken, BadQueryString])
+    @patch("scraper.requests.get")
+    def test_invalid_request(self, mock_get: MagicMock) -> None:
+        """Test that the function handles invalid requests gracefully."""
+        params = {"q": "test"}
+        token = "invalid_token"
 
-    # Simulate a failed API response (401)
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            "400 Client Error: InvalidToken"
+        )
+        mock_get.return_value = mock_response
+
+        # Redircting stdout to StringIO
+        captured_output = io.StringIO()
+        sys.stdout = captured_output
+
+        result = search_posts(params, token)
+        sys.stdout = sys.__stdout__
+
+        self.assertEqual(result, [])
+        self.assertIn("400 Client Error:", captured_output.getvalue())
 
 
 if __name__ == "__main__":
